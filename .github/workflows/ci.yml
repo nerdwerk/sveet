@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: file:local.db
+      BETTER_AUTH_SECRET: ci-placeholder-secret-not-used-at-build
+      ORIGIN: http://localhost:5173
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - run: bun run db:migrate
+      - run: bun run lint
+      - run: bun run check
+      - run: bun run build

@@ -1,0 +1,29 @@
+# Fly.io config for sveet. Run `fly launch --no-deploy` once to claim an app
+# name + region, then adjust `app` and `primary_region` below.
+app = "sveet"
+primary_region = "ams"
+
+[build]
+
+[env]
+  PORT = "3000"
+  # libSQL file lives on the mounted volume; survives redeploys.
+  DATABASE_URL = "file:/data/sqlite.db"
+  # Set this to your real app URL (used by Better Auth). Update after launch.
+  ORIGIN = "https://sveet.fly.dev"
+
+# Persistent storage for the SQLite database.
+[[mounts]]
+  source = "sveet_data"
+  destination = "/data"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"

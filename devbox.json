@@ -1,0 +1,13 @@
+{
+	"$schema": "https://raw.githubusercontent.com/jetify-com/devbox/main/.schema/devbox.schema.json",
+	"packages": ["bun@latest", "nodejs@22"],
+	"shell": {
+		"init_hook": [
+			"echo '🍦 sveet — run: bun install && bun run setup && bun run db:migrate && bun run dev'"
+		],
+		"scripts": {
+			"setup": ["bun install", "bun run setup", "bun run db:migrate"],
+			"dev": ["bun run dev"]
+		}
+	}
+}
