@@ -1,4 +1,5 @@
-# sveet
+SVEET
+=====
 
 An opinionated SvelteKit-starter-pacl, delicious like sweets. 🍭
 
@@ -7,7 +8,7 @@ An opinionated SvelteKit-starter-pacl, delicious like sweets. 🍭
 ## Start a new project
 
 ```bash
-npx giget@latest gh:USERNAME/sveet my-app
+npx giget@latest gh:nerdwerk/sveet my-app
 cd my-app
 ```
 
@@ -16,6 +17,7 @@ Then either use [devbox](https://www.jetify.com/devbox) for a pinned toolchain:
 ```bash
 devbox shell      # bun + node, exact versions
 bun install
+bun run setup     # generates .env, sets BETTER_AUTH_SECRET
 bun run db:migrate
 bun run dev
 ```
@@ -24,16 +26,20 @@ bun run dev
 
 ```bash
 bun install
+bun run setup     # generates .env, sets BETTER_AUTH_SECRET
 bun run db:migrate
 bun run dev
 ```
 
 Visit the app, then the **Auth demo** to try sign-up / sign-in.
 
+You can also delete any files you don't need. The UI is not oppinionated, so you can customize it to your needs.
+
 ## Scripts
 
 | Command                                      | Does                                                        |
 | -------------------------------------------- | ----------------------------------------------------------- |
+| `bun run setup`                              | Sets up the project, including .env and BETTER_AUTH_SECRET  |
 | `bun run dev`                                | Dev server                                                  |
 | `bun run build`                              | Production build (`adapter-node` → `build/`)                |
 | `bun run db:generate`                        | Generate a SQL migration from `schema.ts`                   |
@@ -51,7 +57,9 @@ The schema lives in `src/lib/server/db/schema.ts` as typed Drizzle tables. Workf
 2. `bun run db:generate` → writes SQL into `drizzle/` (commit it)
 3. `bun run db:migrate` → applies it
 
-Locally it's a libSQL file (`DATABASE_URL=file:local.db`). To move to hosted/edge later, point `DATABASE_URL` at a [Turso](https://turso.tech) database — same client, no code changes.
+Locally it's a libSQL file (`DATABASE_URL=file:local.db`). 
+To move to hosted/edge later, point `DATABASE_URL` at a [Turso](https://turso.tech) database — same client, no code changes.
+As I am looking into other options as well, this section might change in the future.
 
 ## UI & theming
 
