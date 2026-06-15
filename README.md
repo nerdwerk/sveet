@@ -2,13 +2,13 @@
   <img src="/static/sveet_logo.png" alt="Sveet Logo" width="400">
 </p>
 
-SVEET
-=====
+# SVEET
 
 An opinionated SvelteKit-starter-pack, delicious like sweets. 🍭
 It's a batteries-included starter pack with a focus on AI-assisted development. You can Vibecode your next project and deploy it for the world to see in minutes.
 
 ## Stack
+
 - SvelteKit 2 + Svelte 5
 - Drizzle ORM + libSQL/SQLite
 - Better Auth
@@ -17,7 +17,6 @@ It's a batteries-included starter pack with a focus on AI-assisted development. 
 - Docker → Fly.io
 
 ## Start a new project
-
 
 ```bash
 npx giget@latest gh:nerdwerk/sveet my-app
