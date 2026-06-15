@@ -1,11 +1,23 @@
+<p align="center">
+  <img src="/static/sveet_logo.png" alt="Sveet Logo" width="400">
+</p>
+
 SVEET
 =====
 
-An opinionated SvelteKit-starter-pacl, delicious like sweets. 🍭
+An opinionated SvelteKit-starter-pack, delicious like sweets. 🍭
+It's a batteries-included starter pack with a focus on AI-assisted development. You can Vibecode your next project and deploy it for the world to see in minutes.
 
-**Stack:** SvelteKit 2 + Svelte 5 · Drizzle ORM + libSQL/SQLite · Better Auth · shadcn-svelte + Tailwind 4 · bun + devbox · Docker → Fly.io. The Svelte MCP and the official shadcn-svelte skill are wired in for AI-assisted development.
+## Stack
+- SvelteKit 2 + Svelte 5
+- Drizzle ORM + libSQL/SQLite
+- Better Auth
+- shadcn-svelte + Tailwind 4
+- bun + devbox
+- Docker → Fly.io
 
 ## Start a new project
+
 
 ```bash
 npx giget@latest gh:nerdwerk/sveet my-app
@@ -51,15 +63,19 @@ You can also delete any files you don't need. The UI is not oppinionated, so you
 
 ## Database
 
-The schema lives in `src/lib/server/db/schema.ts` as typed Drizzle tables. Workflow:
+The schema lives in `src/lib/server/db/schema.ts` as typed Drizzle tables.
+
+**Workflow:**
 
 1. Edit `schema.ts`
 2. `bun run db:generate` → writes SQL into `drizzle/` (commit it)
 3. `bun run db:migrate` → applies it
 
-Locally it's a libSQL file (`DATABASE_URL=file:local.db`). 
-To move to hosted/edge later, point `DATABASE_URL` at a [Turso](https://turso.tech) database — same client, no code changes.
+Locally it's a libSQL file (`DATABASE_URL=file:local.db`).
+You can use the same approach on fly.io, the project is all set up for it.
+Or, if you prefer, you can use a [Turso](https://turso.tech) database — same client, no code changes.
 As I am looking into other options as well, this section might change in the future.
+I am a big fan of Pocketbase, so I'll try to find a way to integrate it as well soon.
 
 ## UI & theming
 
@@ -69,7 +85,7 @@ Components come from [shadcn-svelte](https://www.shadcn-svelte.com). Add more wi
 bunx shadcn-svelte@latest add card input label dialog
 ```
 
-**Restyle everything** by editing the CSS variables in `src/routes/layout.css` (`:root` = light, `.dark` = dark). Base color is `neutral`.
+**Restyle everything** by editing the CSS variables in `src/routes/layout.css` (`:root` = light, `.dark` = dark). Base color is `neutral`. This might change as I'm exploring other color schemes and design systems, so keep an eye out for updates.
 
 ## AI tooling
 
