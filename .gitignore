@@ -1,7 +1,10 @@
 node_modules
+.devbox
 
 # Output
 .output
+
+# Filesystem
 .vercel
 .netlify
 .wrangler
