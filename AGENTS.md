@@ -7,7 +7,7 @@ Operating guide for AI agents (and humans) working in this repo. Read this first
 `sveet` — an opinionated SvelteKit starter. Stack:
 
 - **SvelteKit 2 + Svelte 5 (runes)** — `adapter-node`
-- **Drizzle ORM + libSQL/SQLite** — typed schema in `src/lib/server/db/schema.ts`
+- **Drizzle ORM + `bun:sqlite`** — typed schema in `src/lib/server/db/schema.ts`
 - **Better Auth** — email + password, configured in `src/lib/server/auth.ts`
 - **shadcn-svelte + Tailwind 4** — components in `src/lib/components/ui`, theme tokens in `src/routes/layout.css`
 - **bun** runtime + **devbox** environment
@@ -20,6 +20,7 @@ Operating guide for AI agents (and humans) working in this repo. Read this first
 3. **When writing Svelte code**, use the **Svelte MCP** (configured in `.mcp.json`): call `list-sections` → `get-documentation` for anything non-trivial, and run `svelte-autofixer` on generated components until clean.
 4. **When adding or composing UI**, defer to the vendored **shadcn-svelte skill** (`.agents/skills/shadcn-svelte/`). Add components with `bunx shadcn-svelte@latest add <name>` — never hand-write what the registry provides.
 5. **Secrets never go in the image or git.** Use `.env` locally and `fly secrets set` in production.
+6. **Everything runs on bun.** `dev`/`build`/`preview` are `bun --bun vite …` so that `bun:sqlite` resolves — don't drop the `--bun` flag, and don't run them with `npm`/`node`. Likewise, don't add `@better-auth/cli` as a dependency: it hoists an older `@better-auth/core` that bun resolves in preference to the right one, which breaks the build. `bun run auth:schema` fetches it via `bunx` instead.
 
 ## Commands
 
@@ -39,7 +40,7 @@ Operating guide for AI agents (and humans) working in this repo. Read this first
 
 ## Where things live
 
-- `src/lib/server/db/` — `schema.ts` (your tables), `auth.schema.ts` (generated), `index.ts` (client), `migrate.ts` (runtime migrator)
+- `src/lib/server/db/` — `schema.ts` (your tables), `auth.schema.ts` (generated), `index.ts` (`bun:sqlite` client), `migrate.ts` (runtime migrator)
 - `src/lib/server/auth.ts` — Better Auth config
 - `src/hooks.server.ts` — session loading
 - `src/lib/components/ui/` — shadcn-svelte components
@@ -52,4 +53,4 @@ All design tokens are CSS variables in `src/routes/layout.css` (`:root` for ligh
 
 ## Deploy
 
-Docker image runs migrations on startup (`docker-entrypoint.sh`) against the SQLite file on the Fly volume at `/data`, then starts the server. See `README.md` for the Fly flow.
+Docker image runs migrations on startup (`docker-entrypoint.sh`) against the SQLite file on the Fly volume at `/data`, then starts the server. The runtime image ships no `node_modules` — the app is bundled by Vite and the migrator by `bun build` — so anything needed at runtime must come through one of those two bundles. See `README.md` for the Fly flow.

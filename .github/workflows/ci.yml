@@ -9,7 +9,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     env:
-      DATABASE_URL: file:local.db
+      DATABASE_PATH: local.db
       BETTER_AUTH_SECRET: ci-placeholder-secret-not-used-at-build
       ORIGIN: http://localhost:5173
     steps:

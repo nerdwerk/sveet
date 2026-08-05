@@ -21,10 +21,11 @@ export default defineConfig({
 			}
 		})
 	],
-	// libSQL ships a native binary that must not be bundled into the server
-	// build — keep it external so it's required from node_modules at runtime.
+	// bun:sqlite is a bun runtime builtin with no npm package behind it — keep it
+	// external so the server bundle imports it from the runtime. This is also why
+	// the dev/build/preview scripts run vite via `bun --bun`.
 	ssr: {
-		external: ['@libsql/client', 'libsql']
+		external: ['bun:sqlite']
 	},
 	test: {
 		expect: { requireAssertions: true },

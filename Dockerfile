@@ -7,22 +7,22 @@ COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 COPY . .
 RUN bun run build
+# Bundle the runtime migrator into a single file so the runtime image needs
+# no node_modules at all (bun:sqlite is a builtin, nothing native to link).
+RUN bun build src/lib/server/db/migrate.ts --target=bun --outfile=migrate.js
 
 # ---- runtime ----
 FROM oven/bun:1-slim AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
-# libSQL file on the mounted Fly volume (note the file: scheme)
-ENV DATABASE_URL=file:/data/sqlite.db
+# SQLite file on the mounted Fly volume.
+ENV DATABASE_PATH=/data/sqlite.db
 
-# App build output + the deps needed at runtime (libSQL is a native module
-# that isn't bundled) + migrations and the runtime migrator.
+# Build output + the committed migrations + the bundled migrator. That's all.
 COPY --from=builder /app/build ./build
-COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/drizzle ./drizzle
-COPY --from=builder /app/src/lib/server/db/migrate.ts ./src/lib/server/db/migrate.ts
-COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/migrate.js ./migrate.js
 COPY docker-entrypoint.sh ./docker-entrypoint.sh
 RUN chmod +x docker-entrypoint.sh
 

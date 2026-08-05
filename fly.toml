@@ -7,8 +7,8 @@ primary_region = "ams"
 
 [env]
   PORT = "3000"
-  # libSQL file lives on the mounted volume; survives redeploys.
-  DATABASE_URL = "file:/data/sqlite.db"
+  # SQLite file lives on the mounted volume; survives redeploys.
+  DATABASE_PATH = "/data/sqlite.db"
   # Set this to your real app URL (used by Better Auth). Update after launch.
   ORIGIN = "https://sveet.fly.dev"
 

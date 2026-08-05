@@ -10,7 +10,7 @@ It's a batteries-included starter pack with a focus on AI-assisted development. 
 ## Stack
 
 - SvelteKit 2 + Svelte 5
-- Drizzle ORM + libSQL/SQLite
+- Drizzle ORM + `bun:sqlite`
 - Better Auth
 - shadcn-svelte + Tailwind 4
 - bun + devbox
@@ -70,11 +70,17 @@ The schema lives in `src/lib/server/db/schema.ts` as typed Drizzle tables.
 2. `bun run db:generate` → writes SQL into `drizzle/` (commit it)
 3. `bun run db:migrate` → applies it
 
-Locally it's a libSQL file (`DATABASE_URL=file:local.db`).
-You can use the same approach on fly.io, the project is all set up for it.
-Or, if you prefer, you can use a [Turso](https://turso.tech) database — same client, no code changes.
-As I am looking into other options as well, this section might change in the future.
-I am a big fan of Pocketbase, so I'll try to find a way to integrate it as well soon.
+The database is a plain SQLite file addressed by `DATABASE_PATH` (`local.db` in dev,
+`/data/sqlite.db` on the Fly volume in production), opened with bun's built-in
+[`bun:sqlite`](https://bun.sh/docs/api/sqlite) driver in WAL mode. There's no native
+module and no separate database server to run.
+
+Because `bun:sqlite` only exists inside the bun runtime, `dev`, `build` and `preview`
+all run as `bun --bun vite …`. Running them under `node`/`npm` will fail to resolve
+`bun:sqlite`.
+
+I am a big fan of Pocketbase, so there's also a `pocketbase` branch that swaps the
+whole data + auth layer for PocketBase on PocketHost.
 
 ## UI & theming
 
@@ -95,6 +101,8 @@ bunx shadcn-svelte@latest add card input label dialog
 ## Deploy to Fly.io
 
 The app is a Docker image (`adapter-node`, run by bun). SQLite is persisted on a Fly **Volume** at `/data`, and migrations run on container startup via `docker-entrypoint.sh` — not Fly's `release_command`, which doesn't mount the volume.
+
+The runtime image contains no `node_modules` at all: Vite bundles the server, `bun build` bundles the migrator into a single `migrate.js`, and `bun:sqlite` comes from the runtime itself.
 
 ```bash
 fly launch --no-deploy                                   # claim app name + region (edit fly.toml)

@@ -2,21 +2,19 @@
  * Runtime migrator. Applies the committed SQL migrations in ./drizzle using
  * drizzle-orm only — drizzle-kit is NOT needed in production. Runs on every
  * deploy via docker-entrypoint.sh, and locally via `bun run db:migrate`.
- * Works against a local file or a hosted libSQL/Turso URL.
+ * Requires the bun runtime — it uses the built-in bun:sqlite driver.
  */
-import { drizzle } from 'drizzle-orm/libsql';
-import { createClient } from '@libsql/client';
-import { migrate } from 'drizzle-orm/libsql/migrator';
+import { drizzle } from 'drizzle-orm/bun-sqlite';
+import { Database } from 'bun:sqlite';
+import { migrate } from 'drizzle-orm/bun-sqlite/migrator';
 
-const url = process.env.DATABASE_URL;
-if (!url) throw new Error('DATABASE_URL is not set');
+const path = process.env.DATABASE_PATH;
+if (!path) throw new Error('DATABASE_PATH is not set');
 
-const client = createClient({
-	url,
-	authToken: process.env.DATABASE_AUTH_TOKEN || undefined
-});
+const client = new Database(path, { create: true });
+client.exec('PRAGMA journal_mode = WAL;');
 const db = drizzle(client);
 
-await migrate(db, { migrationsFolder: './drizzle' });
-console.log(`✓ migrations applied to ${url}`);
+migrate(db, { migrationsFolder: './drizzle' });
+console.log(`✓ migrations applied to ${path}`);
 client.close();

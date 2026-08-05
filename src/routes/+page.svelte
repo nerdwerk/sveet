@@ -10,10 +10,10 @@
 <main class="mx-auto flex min-h-svh max-w-2xl flex-col justify-center gap-8 px-6 py-16">
 	<div class="flex flex-col gap-3">
 		<h1 class="text-4xl font-bold tracking-tight">sveet</h1>
-		<p class="text-muted-foreground text-lg">
-			An opinionated SvelteKit starter — Drizzle + libSQL, Better Auth, shadcn-svelte, Tailwind 4,
-			devbox + bun, and Fly.io deploy, with the Svelte MCP and a committed shadcn-svelte skill wired
-			in for AI-assisted development.
+		<p class="text-lg text-muted-foreground">
+			An opinionated SvelteKit starter — Drizzle + bun:sqlite, Better Auth, shadcn-svelte, Tailwind
+			4, devbox + bun, and Fly.io deploy, with the Svelte MCP and a committed shadcn-svelte skill
+			wired in for AI-assisted development.
 		</p>
 	</div>
 
@@ -25,7 +25,7 @@
 		</Button>
 	</div>
 
-	<div class="text-muted-foreground border-t pt-6 text-sm">
+	<div class="border-t pt-6 text-sm text-muted-foreground">
 		<p class="mb-2 font-medium text-foreground">Next steps</p>
 		<ul class="list-inside list-disc space-y-1">
 			<li><code>bun run db:migrate</code> — apply the schema to your local database</li>
