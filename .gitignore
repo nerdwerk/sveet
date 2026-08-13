@@ -30,3 +30,5 @@ test-results
 *.db
 local.db
 local.db-*
+bin/pocketbase
+pb_data/types.d.ts
