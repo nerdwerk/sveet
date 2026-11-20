@@ -1,16 +1,16 @@
-import { env } from '$env/dynamic/private';
+import { BETTER_AUTH_SECRET, ORIGIN } from '$app/env/private';
 import { betterAuth } from 'better-auth/minimal';
-import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
-import { db } from '$lib/server/db';
+import { db } from '#lib/server/db/index.ts';
+import { authOptions } from '#lib/server/auth-config.ts';
+
+const options = authOptions(db, { baseURL: ORIGIN, secret: BETTER_AUTH_SECRET });
 
 export const auth = betterAuth({
-	baseURL: env.ORIGIN,
-	secret: env.BETTER_AUTH_SECRET,
-	database: drizzleAdapter(db, { provider: 'sqlite' }),
-	emailAndPassword: { enabled: true },
+	...options,
 	plugins: [
-		sveltekitCookies(getRequestEvent) // make sure this is the last plugin in the array
+		...options.plugins,
+		sveltekitCookies(getRequestEvent) // must stay the last plugin
 	]
 });

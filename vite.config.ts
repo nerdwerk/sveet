@@ -1,6 +1,6 @@
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vitest/config';
-import adapter from '@sveltejs/adapter-node';
+import adapter from '@sveltejs/adapter-bun';
 import { sveltekit } from '@sveltejs/kit/vite';
 
 export default defineConfig({
@@ -12,23 +12,26 @@ export default defineConfig({
 				runes: ({ filename }) =>
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
-			adapter: adapter(),
-			typescript: {
-				config: (config) => ({
-					...config,
-					include: [...config.include, '../drizzle.config.ts']
-				})
-			}
+			// One self-contained executable at build/server: the app, its client
+			// assets, every dependency and the bun runtime. The Docker image ships
+			// that file plus drizzle/ and nothing else.
+			// `BUILD_DIR` only exists for the microsandbox, where host-mounted files
+			// can't be executed (see Sandboxfile).
+			adapter: adapter({
+				out: process.env.BUILD_DIR || 'build',
+				buildOptions: { compile: true }
+			})
 		})
 	],
 	// bun:sqlite is a bun runtime builtin with no npm package behind it — keep it
 	// external so the server bundle imports it from the runtime. This is also why
-	// the dev/build/preview scripts run vite via `bun --bun`.
-	ssr: {
-		external: ['bun:sqlite']
-	},
+	// every script runs vite via `bun --bun`.
+	ssr: { external: ['bun:sqlite'] },
 	test: {
 		expect: { requireAssertions: true },
+		// Vitest's default `forks` pool expects Node's IPC channel, which bun
+		// doesn't implement; workers run as threads instead.
+		pool: 'threads',
 		projects: [
 			{
 				extends: './vite.config.ts',

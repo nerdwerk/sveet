@@ -1,0 +1,5 @@
+#!/bin/sh
+# Enabled by `bun run hooks:install`. Blocks a push when `bun run verify` fails.
+set -eu
+cd "$(git rev-parse --show-toplevel)"
+exec bun run prepush

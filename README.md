@@ -7,7 +7,7 @@
 An opinionated SvelteKit-starter-pack, delicious like sweets. 🍭
 It's a batteries-included starter pack with a focus on AI-assisted development. You can Vibecode your next project and deploy it for the world to see in minutes.
 
-This project is leveraging [bun](https://bun.sh), so I'll recommend getting 
+This project is leveraging [bun](https://bun.sh), so I'll recommend getting
 
 ## Stack
 

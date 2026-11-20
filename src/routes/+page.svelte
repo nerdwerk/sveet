@@ -1,37 +1,37 @@
 <script lang="ts">
-	import { Button } from '$lib/components/ui/button/index.js';
+	import { resolve } from '$app/paths';
+	import { APP } from '#lib/app.ts';
+
+	let { data } = $props();
+
+	const steps = [
+		['Personalize', 'Ask your agent to run the sveet-setup skill — name, deploy target, mail.'],
+		['Model your data', 'Edit src/lib/server/db/schema.ts, then bun run db:generate.'],
+		['Build', 'Compose pages from @ui-sdk/svelte components; theme them in layout.css.'],
+		['Ship', 'bun run deploy — verifies, then deploys to Fly.io.']
+	] as const;
 </script>
 
-<svelte:head>
-	<title>sveet</title>
-	<meta name="description" content="An opinionated SvelteKit starter." />
-</svelte:head>
-
-<main class="mx-auto flex min-h-svh max-w-2xl flex-col justify-center gap-8 px-6 py-16">
-	<div class="flex flex-col gap-3">
-		<h1 class="text-4xl font-bold tracking-tight">sveet</h1>
-		<p class="text-lg text-muted-foreground">
-			An opinionated SvelteKit starter — Drizzle + bun:sqlite, Better Auth, shadcn-svelte, Tailwind
-			4, devbox + bun, and Fly.io deploy, with the Svelte MCP and a committed shadcn-svelte skill
-			wired in for AI-assisted development.
-		</p>
+<section class="flex flex-col gap-4">
+	<h1 class="text-4xl font-semibold tracking-tight text-balance">{APP.name}</h1>
+	<p class="max-w-prose text-lg text-muted-foreground">{APP.tagline}</p>
+	<div class="flex gap-3 pt-2">
+		{#if data.user}
+			<a class="underline" href={resolve('/account')}>Go to your account</a>
+		{:else}
+			<a class="underline" href={resolve('/login')}>Sign in with a magic link</a>
+		{/if}
 	</div>
+</section>
 
-	<div class="flex flex-wrap gap-3">
-		<Button href="/demo/better-auth">Auth demo</Button>
-		<Button href="https://svelte.dev/docs/kit" variant="outline">SvelteKit docs</Button>
-		<Button href="https://www.shadcn-svelte.com/docs/components" variant="ghost">
-			Add components
-		</Button>
-	</div>
-
-	<div class="border-t pt-6 text-sm text-muted-foreground">
-		<p class="mb-2 font-medium text-foreground">Next steps</p>
-		<ul class="list-inside list-disc space-y-1">
-			<li><code>bun run db:migrate</code> — apply the schema to your local database</li>
-			<li><code>bunx shadcn-svelte add card input label</code> — pull in more UI components</li>
-			<li>Edit the theme tokens in <code>src/routes/layout.css</code> to restyle everything</li>
-			<li>See <code>README.md</code> for the Fly.io deploy flow</li>
-		</ul>
-	</div>
-</main>
+<section class="mt-14">
+	<h2 class="text-sm font-medium tracking-wider text-muted-foreground uppercase">Next steps</h2>
+	<ol class="mt-4 grid gap-4 sm:grid-cols-2">
+		{#each steps as [title, body] (title)}
+			<li class="rounded-lg border p-4">
+				<p class="font-medium">{title}</p>
+				<p class="mt-1 text-sm text-muted-foreground">{body}</p>
+			</li>
+		{/each}
+	</ol>
+</section>

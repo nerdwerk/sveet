@@ -1,29 +1,46 @@
-# Fly.io config for sveet. Run `fly launch --no-deploy` once to claim an app
-# name + region, then adjust `app` and `primary_region` below.
-app = "sveet"
-primary_region = "ams"
+# Fly.io config. The `sveet-setup` skill fills in `app`, `primary_region` and
+# ORIGIN; `sveet-deploy` walks through the first launch. Docs:
+# https://fly.io/docs/reference/configuration/
+app = 'sveet'
+primary_region = 'ams'
 
 [build]
 
 [env]
-  PORT = "3000"
-  # SQLite file lives on the mounted volume; survives redeploys.
-  DATABASE_PATH = "/data/sqlite.db"
-  # Set this to your real app URL (used by Better Auth). Update after launch.
-  ORIGIN = "https://sveet.fly.dev"
+  DATABASE_PATH = '/data/sqlite.db'
+  ORIGIN = 'https://sveet.fly.dev'
+  PORT = '3000'
+  # Fly's proxy sets this itself; without it getClientAddress() returns the
+  # proxy and every visitor shares one rate-limit bucket.
+  ADDRESS_HEADER = 'Fly-Client-IP'
+  # Sign-in links go out through Scaleway TEM. SCW_SECRET_KEY and
+  # SCW_DEFAULT_PROJECT_ID are `fly secrets`; the server won't start without them.
+  # Set MAIL_TRANSPORT = 'console' to log links instead while you set mail up.
+  MAIL_TRANSPORT = 'scaleway'
+  MAIL_FROM = 'login@mail.example.com'
 
-# Persistent storage for the SQLite database.
+# SQLite on a volume, which mounts on exactly one machine. A second machine
+# would get its own empty database: scale up, not out, until the database moves.
 [[mounts]]
-  source = "sveet_data"
-  destination = "/data"
+  source = 'data'
+  destination = '/data'
 
 [http_service]
   internal_port = 3000
   force_https = true
-  auto_stop_machines = "stop"
+  # Scale to zero while idle — cheap for side projects. Set to 'off' and
+  # min_machines_running = 1 once cold starts matter.
+  auto_stop_machines = 'stop'
   auto_start_machines = true
   min_machines_running = 0
 
+  # Fly's default of 25 connections per machine is hit long before bun or
+  # SQLite are busy.
+  [http_service.concurrency]
+    type = 'requests'
+    soft_limit = 200
+    hard_limit = 250
+
 [[vm]]
-  size = "shared-cpu-1x"
-  memory = "512mb"
+  size = 'shared-cpu-1x'
+  memory = '512mb'

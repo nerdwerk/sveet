@@ -1,13 +1,6 @@
 node_modules
-.devbox
 
-# Output
-.output
-
-# Filesystem
-.vercel
-.netlify
-.wrangler
+# Build
 /.svelte-kit
 /build
 
@@ -19,16 +12,21 @@ Thumbs.db
 .env
 .env.*
 !.env.example
-!.env.test
 
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
 # Playwright
 test-results
+playwright-report
+
 # SQLite
 *.db
-local.db
-local.db-*
-bin/pocketbase
-pb_data/types.d.ts
+*.db-*
+
+# Claude Code — personal settings stay local
+.claude/settings.local.json
+
+# bun compile temp files
+*.bun-build

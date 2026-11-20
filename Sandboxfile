@@ -1,0 +1,31 @@
+# microsandbox (https://microsandbox.dev) — a microVM for this project.
+# Run it through `bun run sandbox` (scripts/sandbox.sh), which adds the mounts
+# below that YAML can't express yet:
+#   .             → /app            your source, live (bind mount)
+#   owned disk    → /app/node_modules  Linux-native deps; host's stay untouched
+#   owned disk    → /scratch        build output + SQLite (host mounts can't exec
+#                                    binaries or host SQLite's WAL reliably)
+# Use it to run dev/tests in a clean Linux box, or to let a coding agent work
+# with --dangerously-skip-permissions without access to the rest of your machine.
+image: oven/bun:1.4.4
+cpus: 4
+memory: 4G
+workdir: /app
+env:
+  DATABASE_PATH: /scratch/local.db
+  BUILD_DIR: /scratch/build
+  PATH: /root/.local/bin:/usr/local/bin:/usr/bin:/bin
+shell: /bin/bash
+scripts:
+  setup: |
+    set -e
+    bun install --frozen-lockfile
+    [ -f .env ] || bun scripts/setup.ts
+    bun run db:reset
+    bunx playwright install --with-deps chromium > /tmp/playwright-install.log 2>&1
+    echo "✓ sandbox ready — bun run sandbox dev | verify | agent | shell"
+  dev: bun run dev --host 0.0.0.0
+  verify: bun run verify
+  agent: |
+    command -v claude > /dev/null || curl -fsSL https://claude.ai/install.sh | bash
+    exec claude --dangerously-skip-permissions "$@"
