@@ -1,16 +1,8 @@
 # CLAUDE.md
 
-See **[AGENTS.md](./AGENTS.md)** for the full operating guide — stack, golden rules, commands, and conventions.
+Read **[AGENTS.md](./AGENTS.md)**. It's the operating guide: stack, golden rules, commands, where things live, and which skill to load for which flow.
 
-## Svelte MCP (configured in `.mcp.json`)
-
-You have access to the Svelte MCP server with Svelte 5 / SvelteKit docs:
-
-- **`list-sections`** — call FIRST to discover documentation sections.
-- **`get-documentation`** — fetch the relevant sections returned above.
-- **`svelte-autofixer`** — run on any Svelte code you write, repeatedly, until no issues remain.
-- **`playground-link`** — only after the user confirms, and never for code already written to files.
-
-## UI work
-
-A vendored **shadcn-svelte skill** lives in `.agents/skills/shadcn-svelte/`. Use it for adding, composing, and styling components. Add components with `bunx shadcn-svelte@latest add <name>`.
+- **Fresh project?** If `package.json` is still named `sveet`, offer to run the `sveet-setup` skill before anything else.
+- **Svelte MCP** (`.mcp.json`): `list-sections` first, then `get-documentation`; run `svelte-autofixer` on every component you write until it reports nothing; `playground-link` only when the user asks, and never for code already in files.
+- **UI**: the `ui-sdk` skill and `@ui-sdk/svelte` components, themed through `src/routes/layout.css`.
+- **Done means `bun run verify` passed.** Report the result, not an expectation.

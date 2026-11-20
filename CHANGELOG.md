@@ -1,47 +1,47 @@
 # Changelog
 
-All notable changes to this project are documented here. Format follows
-[Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project aims
-to follow [Semantic Versioning](https://semver.org/).
+All notable changes to sveet. Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org/). Projects record the release they started from in `package.json` → `sveet.version`, and the `sveet-upgrade` skill reads this file to bring changes over.
 
 ## [Unreleased]
 
-### Changed
+## [1.0.0] - 2026-11-20
 
-- **Database driver: libSQL → `bun:sqlite`.** Drizzle now talks to a plain SQLite
-  file through bun's built-in driver (WAL mode, foreign keys on). `@libsql/client`
-  and its native binary are gone, and so is the Turso escape hatch.
-- **`DATABASE_URL` → `DATABASE_PATH`.** It's a filesystem path now, not a URL, so
-  `file:local.db` becomes `local.db` and `file:/data/sqlite.db` becomes
-  `/data/sqlite.db`. Update `.env`, `fly.toml`, and any Fly secrets.
-- **`dev`, `build` and `preview` now run as `bun --bun vite …`.** `bun:sqlite` only
-  resolves inside the bun runtime; these scripts no longer work under node.
-- **`@better-auth/cli` is no longer a devDependency.** It hoisted an older
-  `@better-auth/core` that bun resolved in preference to the correct nested copy,
-  breaking dev and build. `bun run auth:schema` now fetches it with `bunx`.
-- **The runtime Docker image no longer contains `node_modules`.** The migrator is
-  bundled with `bun build --target=bun` alongside the Vite-bundled server.
+The agent-first release, shaped by building and running [onelink.ninja](https://onelink.ninja) on sveet.
+
+### Breaking changes and manual steps from 0.x
+
+- **SvelteKit 3.** `svelte.config.js` is gone (config lives in `vite.config.ts`). `$lib` → `#lib/….ts` (`imports` in package.json). `$env/*` → `src/env.ts` + `$app/env/private`. `$app/environment` → `$app/env`. `tsconfig.json` extends `$app/tsconfig`. TypeScript 6 for tooling, with TS 7 (`@typescript/native`) behind `svelte-check --tsgo`.
+- **`adapter-node` → `adapter-bun`**, compiled into one executable at `build/server` (`bun run start`). The Docker runtime is `debian:trixie-slim` + that binary + `drizzle/`, with no bun and no `node_modules`.
+- **Migrations run on server start** (`init` in `hooks.server.ts`); `docker-entrypoint.sh` and the bundled `migrate.js` are gone.
+- **Auth is passwordless.** Email + password is off. Magic links are on, sent through the new mail seam. Production refuses to start without mail credentials unless `MAIL_TRANSPORT=console`.
+- **shadcn-svelte → ui-sdk.** `components.json`, `src/lib/components/ui/`, `tailwind-variants` and `tw-animate-css` are removed. The theme lives in `--ui-*` tokens in `layout.css`, mapped to Tailwind via `@theme inline`.
+- **Migrations restarted** at a single `0000` baseline. 0.x projects keep their own `drizzle/` and only apply schema differences.
+- The Fly volume is named `data` (was `sveet_data`).
+
+### Added
+
+- `src/lib/server/mail.ts`: one `Mailer` seam with a console mailer (dev/tests), a Scaleway TEM mailer (EU), `mailerFromEnv` and test fakes.
+- Deterministic seed (`db:seed`, `db:reset` = wipe + migrate + seed); `createTestDb()` for in-memory, migrated SQLite in Vitest.
+- Playwright against the **production build**, with a fresh seeded database and server per test (`tests/e2e/fixtures.ts`).
+- `bun run verify` (lint + types + all tests), `bun run deploy` (verify, then `fly deploy`), a pre-push hook (`bun run hooks:install`) and CI running the same gate.
+- `bun run deps:update`: in-range updates, committed only when `verify` passes.
+- `bun run auth:schema` restores the timestamp defaults the Better Auth CLI drops.
+- **microsandbox**: `Sandboxfile` + `bun run sandbox [shell|dev|verify|agent]`, with VM-owned disks for `node_modules`, build output and SQLite, and `ANTHROPIC_API_KEY` passed as a secret that never enters the VM.
+- **Skills**: `sveet-setup`, `sveet-feature`, `sveet-deploy`, `sveet-mail`, `sveet-admin`, `sveet-upgrade`, plus `ui-sdk` (synced from the package) and the official `svelte-core-bestpractices` and `svelte-code-writer`.
+- `bun create nerdwerk/sveet my-app` runs `bun run setup` automatically.
+- Fly defaults from production: `ADDRESS_HEADER=Fly-Client-IP` and Better Auth's `fly-client-ip` (per-visitor rate limits), raised concurrency limits, a pinned bun image (1.4.4, CVE-2026-111497).
+- An example vertical slice: a `note` table, an account page, form actions, a seed and tests.
+
+### Removed
+
+- devbox, Renovate (replaced by `deps:update`), shadcn-svelte and its skill, the demo routes, and `@types/node`.
 
 ## [0.1.0] - 2026-06-14
 
 ### Added
 
-- **Initial kickstart of `sveet`** — an opinionated, reusable SvelteKit starter
-  to spin up new projects with one command and maintain as a single source of
-  truth, with the intent to open-source it.
-- **SvelteKit 2 + Svelte 5** (runes), scaffolded via the `sv` CLI, built with
-  `adapter-node`.
-- **Database:** Drizzle ORM over **libSQL/SQLite** — a local file in development,
-  one-line swap to a hosted [Turso](https://turso.tech) endpoint. Migrations are
-  generated with drizzle-kit and applied by a runtime migrator (no drizzle-kit in
-  production).
-- **Auth:** Better Auth (email + password) with a working demo.
-- **UI:** shadcn-svelte + Tailwind 4 (CSS-first theming), with a Button shipped
-  and the rest one `add` command away.
-- **Tooling for AI-assisted development:** the Svelte MCP (hosted) plus editor
-  configs, the vendored official shadcn-svelte skill, and an `AGENTS.md`.
-- **Environment:** bun runtime + devbox, with a `bun run setup` first-run helper.
-- **Deployment:** Dockerfile + `fly.toml`, opinionated for Fly.io, with SQLite on
-  a persistent volume and migrations applied at container startup.
+- Initial sveet: SvelteKit 2 + Svelte 5, Drizzle + libSQL, Better Auth (email + password), shadcn-svelte + Tailwind 4, bun + devbox, Docker → Fly.io, Svelte MCP, and `AGENTS.md`.
 
-[Repo]: https://github.com/nerdwerk/sveet
+[Unreleased]: https://github.com/nerdwerk/sveet/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/nerdwerk/sveet/compare/v0.1.0...v1.0.0
+[0.1.0]: https://github.com/nerdwerk/sveet/releases/tag/v0.1.0

@@ -1,0 +1,26 @@
+{
+	"version": 2,
+	"skills": {
+		"svelte-code-writer": {
+			"source": "sveltejs/ai-tools",
+			"commit": "f9d22f2f7f7cd5e4596eef5d108a69ac8f0dd48d",
+			"sourceType": "github",
+			"skillPath": "tools/skills/svelte-code-writer/SKILL.md",
+			"computedHash": "8eccb2e23091d482aeaca1c95db6c5aa34d055ac2d0c9797efbbecbe5a8e4fd0"
+		},
+		"svelte-core-bestpractices": {
+			"source": "sveltejs/ai-tools",
+			"commit": "f9d22f2f7f7cd5e4596eef5d108a69ac8f0dd48d",
+			"sourceType": "github",
+			"skillPath": "tools/skills/svelte-core-bestpractices/SKILL.md",
+			"computedHash": "32070b91f54f92dba3f6e1739d82bf944c14e7a4a75cfe609a59bf1117c34338"
+		},
+		"ui-sdk": {
+			"source": "@ui-sdk/core",
+			"sourceType": "node_modules",
+			"skillPath": "skills/ui-sdk/SKILL.md",
+			"version": "0.1.0-beta.13",
+			"computedHash": "9a60caf01da3d47beedf627bf1505d922dccc93b04f294c6aa64edf01c46b3ba"
+		}
+	}
+}

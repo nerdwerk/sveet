@@ -1,121 +1,107 @@
 <p align="center">
-  <img src="/static/sveet_logo.png" alt="Sveet Logo" width="400">
+  <img src="static/sveet_logo.png" alt="Sveet logo" width="400">
 </p>
 
 # SVEET
 
-An opinionated SvelteKit-starter-pack, delicious like sweets. 🍭
-It's a batteries-included starter pack with a focus on AI-assisted development. You can Vibecode your next project and deploy it for the world to see in minutes.
+An opinionated, agent-first SvelteKit starter, delicious like sweets. 🍭
 
-This project is leveraging [bun](https://bun.sh), so I'll recommend getting
+One stack and one way to do each thing, with skills that teach your coding agent the flows: set the project up, build a feature, deploy it. Describe what you want, let the agent build it, and ship it in minutes. Sveet started as the base of [onelink.ninja](https://onelink.ninja), and what that project learned in production flows back here.
 
 ## Stack
 
-- SvelteKit 2 + Svelte 5
-- Drizzle ORM + `bun:sqlite`
-- Better Auth
-- shadcn-svelte + Tailwind 4
-- bun + devbox
-- Docker → Fly.io
+- **SvelteKit 3 + Svelte 5**, compiled by `adapter-bun` into a single executable
+- **bun** for everything: install, dev, build, tests, scripts
+- **SQLite** via `bun:sqlite` + **Drizzle**: no database server, committed migrations
+- **Better Auth** with passwordless **magic links**, behind one mail seam (Scaleway TEM built in)
+- **[ui-sdk](https://ui-sdk.dev)** components themed by tokens, plus **Tailwind 4**
+- **Vitest** (in-memory SQLite) and **Playwright** (the real build, a fresh database per test)
+- **Docker → Fly.io**, SQLite on a volume, migrations on start
+- **[microsandbox](https://microsandbox.dev)** microVM for Linux dev/tests and permission-free agent runs
+- **Agent tooling**: `AGENTS.md`, the Svelte MCP, and project skills
 
-## Start a new project
+## Start a project
 
 ```bash
-bunx giget@latest gh:nerdwerk/sveet my-app
+bun create nerdwerk/sveet my-app   # copies the template, installs, runs `bun run setup`
 cd my-app
-```
-
-Then either use [devbox](https://www.jetify.com/devbox) for a pinned toolchain:
-
-```bash
-devbox shell      # bun + node, exact versions
-bun install
-bun run setup     # generates .env, sets BETTER_AUTH_SECRET
-bun run db:migrate
 bun run dev
 ```
 
-…or, if you already have bun:
+Then open the project in your coding agent and say **"set this project up"**. The `sveet-setup` skill asks for the name, what the app does, where it runs (Fly region, domain), how mail goes out, and who may sign up. It then rewrites the project to match and runs the test suite.
+
+<details>
+<summary>Other ways to get the template</summary>
 
 ```bash
-bun install
-bun run setup     # generates .env, sets BETTER_AUTH_SECRET
-bun run db:migrate
-bun run dev
+bunx giget@latest gh:nerdwerk/sveet my-app && cd my-app && bun install && bun run setup
+# or: git clone https://github.com/nerdwerk/sveet my-app (keeps history; handy for upgrades)
 ```
 
-Visit the app, then the **Auth demo** to try sign-up / sign-in.
+Sign in at `/login` with `ada@example.com` (seeded); the magic link prints in the `bun run dev` console.
 
-You can also delete any files you don't need. The UI is not oppinionated, so you can customize it to your needs.
+</details>
 
-## Scripts
+**Needs:** [bun](https://bun.com) ≥ 1.4.4. For deploys, [flyctl](https://fly.io/docs/flyctl/install/). For the sandbox, [microsandbox](https://microsandbox.dev) on Apple Silicon or Linux with KVM.
 
-| Command                                      | Does                                                        |
-| -------------------------------------------- | ----------------------------------------------------------- |
-| `bun run setup`                              | Sets up the project, including .env and BETTER_AUTH_SECRET  |
-| `bun run dev`                                | Dev server                                                  |
-| `bun run build`                              | Production build (`adapter-node` → `build/`)                |
-| `bun run db:generate`                        | Generate a SQL migration from `schema.ts`                   |
-| `bun run db:migrate`                         | Apply migrations (runtime migrator — no drizzle-kit needed) |
-| `bun run db:studio`                          | Drizzle Studio GUI                                          |
-| `bun run db:reset`                           | Delete the local DB and re-migrate                          |
-| `bun run auth:schema`                        | Regenerate the Better Auth schema after config changes      |
-| `bun run check` · `lint` · `format` · `test` | Quality gates                                               |
+## Daily loop
 
-## Database
+| Command                 | Does                                                        |
+| ----------------------- | ----------------------------------------------------------- |
+| `bun run dev`           | Dev server; sign-in links print to the console              |
+| `bun run verify`        | Lint + types + unit + e2e on the production build           |
+| `bun run db:generate`   | Migration from `src/lib/server/db/schema.ts`                |
+| `bun run db:reset`      | Fresh local DB from migrations + seed                       |
+| `bun run deploy`        | `verify`, then `fly deploy`                                 |
+| `bun run sandbox [cmd]` | The project in a microVM: `shell`, `dev`, `verify`, `agent` |
+| `bun run deps:update`   | Dependency updates, committed only if `verify` passes       |
 
-The schema lives in `src/lib/server/db/schema.ts` as typed Drizzle tables.
+The full list, the golden rules and the map of the code are in [AGENTS.md](AGENTS.md). It's written for agents and works just as well for humans.
 
-**Workflow:**
+## Skills
 
-1. Edit `schema.ts`
-2. `bun run db:generate` → writes SQL into `drizzle/` (commit it)
-3. `bun run db:migrate` → applies it
+Project skills live in `.agents/skills/` (and `.claude/skills/`). Agents load them on their own, or you can ask for one by name:
 
-The database is a plain SQLite file addressed by `DATABASE_PATH` (`local.db` in dev,
-`/data/sqlite.db` on the Fly volume in production), opened with bun's built-in
-[`bun:sqlite`](https://bun.sh/docs/api/sqlite) driver in WAL mode. There's no native
-module and no separate database server to run.
+- **`sveet-setup`**: interview, then personalize a fresh checkout
+- **`sveet-feature`**: spec → schema → seed → logic + tests → UI → e2e → verify
+- **`sveet-deploy`**: first Fly launch, secrets, mail DNS, domains, scaling, production data
+- **`sveet-mail`**: another mail provider, or a new kind of mail
+- **`sveet-admin`**: health checks, superusers, an /admin area
+- **`sveet-upgrade`**: bring a newer sveet release into your project
+- plus `ui-sdk` (from the package itself) and the official Svelte skills
 
-Because `bun:sqlite` only exists inside the bun runtime, `dev`, `build` and `preview`
-all run as `bun --bun vite …`. Running them under `node`/`npm` will fail to resolve
-`bun:sqlite`.
-
-I am a big fan of Pocketbase, so there's also a `pocketbase` branch that swaps the
-whole data + auth layer for PocketBase on PocketHost.
-
-## UI & theming
-
-Components come from [shadcn-svelte](https://www.shadcn-svelte.com). Add more with:
+## Deploy
 
 ```bash
-bunx shadcn-svelte@latest add card input label dialog
+fly apps create <app>
+fly volumes create data --size 1 --region <region>
+fly secrets set BETTER_AUTH_SECRET="$(openssl rand -base64 32)" SCW_SECRET_KEY=… SCW_DEFAULT_PROJECT_ID=…
+bun run deploy
 ```
 
-**Restyle everything** by editing the CSS variables in `src/routes/layout.css` (`:root` = light, `.dark` = dark). Base color is `neutral`. This might change as I'm exploring other color schemes and design systems, so keep an eye out for updates.
+The image is one compiled executable plus `drizzle/` on debian-slim, with no bun and no `node_modules` at runtime. It's plain Docker, so it runs anywhere a container does. `sveet-deploy` covers mail DNS, custom domains, scaling and backups.
 
-## AI tooling
-
-- **Svelte MCP** — configured in `.mcp.json` (Claude Code), `.cursor/mcp.json`, `.vscode/mcp.json`. Gives agents live Svelte 5 / SvelteKit docs and an autofixer.
-- **shadcn-svelte skill** — vendored in `.agents/skills/shadcn-svelte/`. Agents use it to add and compose components correctly.
-- **`AGENTS.md`** — the operating guide agents read first.
-
-## Deploy to Fly.io
-
-The app is a Docker image (`adapter-node`, run by bun). SQLite is persisted on a Fly **Volume** at `/data`, and migrations run on container startup via `docker-entrypoint.sh` — not Fly's `release_command`, which doesn't mount the volume.
-
-The runtime image contains no `node_modules` at all: Vite bundles the server, `bun build` bundles the migrator into a single `migrate.js`, and `bun:sqlite` comes from the runtime itself.
+## Sandbox
 
 ```bash
-fly launch --no-deploy                                   # claim app name + region (edit fly.toml)
-fly volumes create sveet_data --size 1 --region <region> # persistent SQLite storage
-fly secrets set BETTER_AUTH_SECRET="$(openssl rand -base64 32)"
-fly deploy
+brew install superradcompany/tap/microsandbox
+bun run sandbox          # first run creates the VM and sets it up, then opens a shell
+bun run sandbox agent    # Claude Code with --dangerously-skip-permissions, inside the VM
 ```
 
-After launch, set `ORIGIN` in `fly.toml` to your real app URL (Better Auth needs it).
+Your repo is mounted live. `node_modules`, build output and the SQLite file stay on VM-owned disks, so the host's install is untouched. An `ANTHROPIC_API_KEY` on the host goes in as a microsandbox secret, so the VM only ever sees a placeholder.
 
-It's plain Docker underneath, so it runs anywhere a container does.
+## Updating
+
+A sveet project is a copy, not a dependency, so updates are a merge. `package.json` records the release you started from (`sveet.version`). Ask your agent to **"upgrade sveet"**: the `sveet-upgrade` skill diffs that release against the newest one and applies the parts that fit your project, such as tooling, fixes and skills.
+
+## The Svelte CLI
+
+`sv create` has no remote templates; it extends projects through [community add-ons](https://svelte.dev/docs/cli/community). See [docs/sv.md](docs/sv.md) for the plan to ship sveet as `bunx sv create --add @nerdwerk/sveet`.
+
+## Variants
+
+The [`pocketbase`](https://github.com/nerdwerk/sveet/tree/pocketbase) branch swaps the data and auth layer for PocketBase on PocketHost. It follows its own release pace.
 
 ## License
 

@@ -10,3 +10,9 @@ bun.lockb
 /drizzle/
 
 *.bun-build
+
+# Vendored skills (hashes pinned in skills-lock.json)
+.agents/skills/svelte-*
+.agents/skills/ui-sdk
+.claude/skills/svelte-*
+.claude/skills/ui-sdk

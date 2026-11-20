@@ -8,6 +8,12 @@
 	"engines": {
 		"bun": ">=1.4.4"
 	},
+	"sveet": {
+		"version": "1.0.0"
+	},
+	"bun-create": {
+		"postinstall": "bun run setup"
+	},
 	"scripts": {
 		"setup": "bun scripts/setup.ts",
 		"dev": "bun --bun vite dev",
