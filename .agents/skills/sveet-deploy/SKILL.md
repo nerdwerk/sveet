@@ -13,7 +13,7 @@ Every `fly` command below changes a real account, so confirm each one with the u
 
 ## First launch
 
-1. `fly.toml` should already carry the right `app`, `primary_region` and `ORIGIN` (from `sveet-setup`). Check before going on.
+1. `fly.toml` ships with `app` and `ORIGIN` empty, so nothing deploys by accident. `sveet-setup` fills them in; if they are still empty, ask the user for the app name and URL and fill them in now.
 2. Create the app: `fly apps create <app>`. If the name is taken, pick another and update `fly.toml` plus `ORIGIN`.
 3. Create the volume: `fly volumes create data --size 1 --region <primary_region> --app <app>`. The name must match `[[mounts]] source`.
 4. Set the secrets. Never commit them, never put them in `fly.toml`:

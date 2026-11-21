@@ -1,12 +1,12 @@
-# sveet-setup fills in app, region and ORIGIN; sveet-deploy does the first launch.
-app = 'sveet'
+# Empty on purpose: fly and the server refuse to run until sveet-setup (or you) fill in app and ORIGIN.
+app = ''
 primary_region = 'ams'
 
 [build]
 
 [env]
   DATABASE_PATH = '/data/sqlite.db'
-  ORIGIN = 'https://sveet.fly.dev'
+  ORIGIN = ''
   PORT = '3000'
   # Otherwise every visitor shares the proxy's IP and one rate-limit bucket.
   ADDRESS_HEADER = 'Fly-Client-IP'
