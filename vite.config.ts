@@ -23,6 +23,9 @@ export default defineConfig({
 			})
 		})
 	],
+	// Inside the microsandbox VM the dev server must listen on every interface,
+	// or the port forward to the host's localhost:5173 has nothing to reach.
+	server: { host: process.env.SVEET_SANDBOX ? '0.0.0.0' : undefined, strictPort: true },
 	// bun:sqlite is a bun runtime builtin with no npm package behind it — keep it
 	// external so the server bundle imports it from the runtime. This is also why
 	// every script runs vite via `bun --bun`.

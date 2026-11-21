@@ -7,6 +7,8 @@ description: Ships a sveet app to Fly.io — first launch (app, volume, secrets,
 
 `bun run deploy` = `bun run verify && fly deploy`. Fly builds the Dockerfile remotely. The image holds one executable (`build/server`, compiled by adapter-bun) plus `drizzle/`. The server applies pending migrations when it starts. SQLite lives on a Fly volume at `/data`.
 
+**Deploys happen on the host, never in the sandbox.** If `SVEET_SANDBOX=1` is set, you are inside the VM: there is no flyctl or Fly token there, and `bun run deploy` refuses on purpose. Prepare everything you can (fly.toml, docs, `bun run verify`), then give the user the exact commands to run on their machine, one step at a time, and wait for them to report back.
+
 Every `fly` command below changes a real account, so confirm each one with the user before running it. Show the command, say what it does, and run it once they agree. `fly auth whoami` tells you whether they're logged in.
 
 ## First launch

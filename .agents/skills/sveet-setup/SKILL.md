@@ -11,24 +11,25 @@ You are turning the sveet starter into the user's project. Ask first, change sec
 
 1. Confirm you are at the repo root and `package.json` has `"sveet": { "version": … }`. Note that version.
 2. Run `git status`. If there are uncommitted changes, ask before continuing.
-3. If `node_modules` is missing, run `bun install`. If `.env` is missing, run `bun run setup` (creates `.env`, migrates, seeds).
+3. Check `SVEET_SANDBOX`. If it is set, you are in the sandbox (the usual case): the dev server is already running at http://localhost:5173 and restarts with `bun run sandbox restart`. `fly` commands are not available, so list them for the user to run on the host. If it is not set, the user is working on the host directly.
+4. If `node_modules` is missing, run `bun install`. If `.env` is missing, run `bun run setup` (creates `.env`, migrates, seeds).
 
 ## 1. Interview
 
 Ask with your question tool if you have one, in **one round** where possible. Offer the recommended default first. Skip anything the user already told you.
 
-| #   | Question                                            | Default / notes                                                                                                                            |
-| --- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1   | Project name (npm-style slug) and display name      | slug from the folder name                                                                                                                  |
-| 2   | One-line tagline — what does it do, for whom?       | used in `<meta>`, the landing page and mail                                                                                                |
-| 3   | Where will it run?                                  | **Fly.io** (default). Others: "any Docker host" (keep Dockerfile, drop fly.toml) or "decide later" (keep Fly files)                        |
-| 4   | Fly app name + region (if Fly)                      | app = slug; region nearest the user's audience (`fly platform regions`). Only check availability with `fly apps create` if the user agrees |
-| 5   | Public URL                                          | `https://<app>.fly.dev`, or their custom domain                                                                                            |
-| 6   | Transactional mail                                  | **Scaleway TEM** (EU, built in) · another provider → also run the `sveet-mail` skill · "not yet" → `MAIL_TRANSPORT=console` in fly.toml    |
-| 7   | Sender address                                      | `login@mail.<domain>`; a dedicated `mail.` subdomain keeps reputation off the root domain                                                  |
-| 8   | Who may sign up?                                    | **anyone** (default) · invite-only → `disableSignUp: true` in the magic-link plugin plus a way to create users (seed/CLI)                  |
-| 9   | Keep the example `note` table and account notes UI? | Keep as a reference, or remove (recommended once they start their own schema)                                                              |
-| 10  | License + copyright holder                          | MIT, holder from `git config user.name`; or "proprietary" (remove LICENSE, set `"private": true`)                                          |
+| #   | Question                                            | Default / notes                                                                                                                                                       |
+| --- | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Project name (npm-style slug) and display name      | slug from the folder name                                                                                                                                             |
+| 2   | One-line tagline — what does it do, for whom?       | used in `<meta>`, the landing page and mail                                                                                                                           |
+| 3   | Where will it run?                                  | **Fly.io** (default). Others: "any Docker host" (keep Dockerfile, drop fly.toml) or "decide later" (keep Fly files)                                                   |
+| 4   | Fly app name + region (if Fly)                      | app = slug; region nearest the user's audience (`fly platform regions`). Checking availability means `fly apps create`; on the host only, and only if the user agrees |
+| 5   | Public URL                                          | `https://<app>.fly.dev`, or their custom domain                                                                                                                       |
+| 6   | Transactional mail                                  | **Scaleway TEM** (EU, built in) · another provider → also run the `sveet-mail` skill · "not yet" → `MAIL_TRANSPORT=console` in fly.toml                               |
+| 7   | Sender address                                      | `login@mail.<domain>`; a dedicated `mail.` subdomain keeps reputation off the root domain                                                                             |
+| 8   | Who may sign up?                                    | **anyone** (default) · invite-only → `disableSignUp: true` in the magic-link plugin plus a way to create users (seed/CLI)                                             |
+| 9   | Keep the example `note` table and account notes UI? | Keep as a reference, or remove (recommended once they start their own schema)                                                                                         |
+| 10  | License + copyright holder                          | MIT, holder from `git config user.name`; or "proprietary" (remove LICENSE, set `"private": true`)                                                                     |
 
 ## 2. Apply
 

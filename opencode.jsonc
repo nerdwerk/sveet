@@ -1,0 +1,10 @@
+{
+	// opencode (the sandbox's default agent) reads AGENTS.md and .agents/skills on
+	// its own; this adds the Svelte MCP, the same one .mcp.json gives Claude Code.
+	"$schema": "https://opencode.ai/config.json",
+	"mcp": {
+		"servers": {
+			"svelte": { "type": "remote", "url": "https://mcp.svelte.dev/mcp", "oauth": false }
+		}
+	}
+}

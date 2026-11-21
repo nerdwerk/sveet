@@ -26,7 +26,11 @@ The agent-first release, shaped by building and running [onelink.ninja](https://
 - `bun run verify` (lint + types + all tests), `bun run deploy` (verify, then `fly deploy`), a pre-push hook (`bun run hooks:install`) and CI running the same gate.
 - `bun run deps:update`: in-range updates, committed only when `verify` passes.
 - `bun run auth:schema` restores the timestamp defaults the Better Auth CLI drops.
-- **microsandbox**: `Sandboxfile` + `bun run sandbox [shell|dev|verify|agent]`, with VM-owned disks for `node_modules`, build output and SQLite, and `ANTHROPIC_API_KEY` passed as a secret that never enters the VM.
+- **The sandbox is the default way to work.** `bun run sandbox` boots a microsandbox VM (`Sandboxfile`, `scripts/sandbox.sh` + `scripts/sandbox-vm.sh`) that runs the dev server and **opencode** (`opencode serve` + web UI on :4096, password-protected) under a small supervisor that restarts crashed services. Other commands: `restart`, `logs`, `agent [opencode|claude|codex]` (no permission prompts), `acp [opencode|claude]` for editors, `zed` (prints the Zed `agent_servers` config), `shell`, `stop`, `rm`. The repo is mounted at the same path as on the host; `node_modules` and `/scratch` (build, SQLite, logs, logins) are VM-owned disks.
+- `Brewfile` for host prerequisites (bun, microsandbox, flyctl).
+- `bun run deploy` refuses to run inside the sandbox: production stays a human decision on the host.
+- `bun run db:reset` empties the database in place, so a running dev server picks up fresh data without a restart.
+- `opencode.jsonc` with the Svelte MCP; opencode reads `AGENTS.md` and `.agents/skills` itself.
 - **Skills**: `sveet-setup`, `sveet-feature`, `sveet-deploy`, `sveet-mail`, `sveet-admin`, `sveet-upgrade`, plus `ui-sdk` (synced from the package) and the official `svelte-core-bestpractices` and `svelte-code-writer`.
 - `bun create nerdwerk/sveet my-app` runs `bun run setup` automatically.
 - Fly defaults from production: `ADDRESS_HEADER=Fly-Client-IP` and Better Auth's `fly-client-ip` (per-visitor rate limits), raised concurrency limits, a pinned bun image (1.4.4, CVE-2026-111497).

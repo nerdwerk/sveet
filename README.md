@@ -6,7 +6,7 @@
 
 An opinionated, agent-first SvelteKit starter, delicious like sweets. 🍭
 
-One stack and one way to do each thing, with skills that teach your coding agent the flows: set the project up, build a feature, deploy it. Describe what you want, let the agent build it, and ship it in minutes. Sveet started as the base of [onelink.ninja](https://onelink.ninja), and what that project learned in production flows back here.
+One stack and one way to do each thing, with skills that teach your coding agent the flows: set the project up, build a feature, deploy it. Everything runs in a sandbox, so the agent can work without permission prompts and still can't touch the rest of your machine. Sveet started as the base of [onelink.ninja](https://onelink.ninja), and what that project learned in production flows back here.
 
 ## Stack
 
@@ -17,50 +17,85 @@ One stack and one way to do each thing, with skills that teach your coding agent
 - **[ui-sdk](https://ui-sdk.dev)** components themed by tokens, plus **Tailwind 4**
 - **Vitest** (in-memory SQLite) and **Playwright** (the real build, a fresh database per test)
 - **Docker → Fly.io**, SQLite on a volume, migrations on start
-- **[microsandbox](https://microsandbox.dev)** microVM for Linux dev/tests and permission-free agent runs
+- **[microsandbox](https://microsandbox.dev)** dev VM with the dev server, tests and agents ([opencode](https://opencode.ai) by default)
 - **Agent tooling**: `AGENTS.md`, the Svelte MCP, and project skills
 
 ## Start a project
 
+**1. Install what sveet needs on your machine:** [bun](https://bun.com), [microsandbox](https://microsandbox.dev) (the dev VM) and, for deploys, [flyctl](https://fly.io/docs/flyctl/install/). Either download the [Brewfile](https://raw.githubusercontent.com/nerdwerk/sveet/main/Brewfile) and run `brew bundle` next to it, or run:
+
 ```bash
-bun create nerdwerk/sveet my-app   # copies the template, installs, runs `bun run setup`
+brew install bun superradcompany/tap/microsandbox flyctl
+```
+
+The sandbox runs on Apple Silicon Macs, or on Linux with KVM.
+
+**2. Create the project and boot its sandbox:**
+
+```bash
+bun create nerdwerk/sveet my-app
 cd my-app
-bun run dev
+bun run sandbox
 ```
 
-Then open the project in your coding agent and say **"set this project up"**. The `sveet-setup` skill asks for the name, what the app does, where it runs (Fly region, domain), how mail goes out, and who may sign up. It then rewrites the project to match and runs the test suite.
+The first boot takes a few minutes, because it installs the dependencies, the test browser and the agent inside the VM. After that, booting takes about a second. It prints:
 
-<details>
-<summary>Other ways to get the template</summary>
-
-```bash
-bunx giget@latest gh:nerdwerk/sveet my-app && cd my-app && bun install && bun run setup
-# or: git clone https://github.com/nerdwerk/sveet my-app (keeps history; handy for upgrades)
+```
+  App       http://localhost:5173
+  Agent     http://localhost:4096   user: opencode   password: …
 ```
 
-Sign in at `/login` with `ada@example.com` (seeded); the magic link prints in the `bun run dev` console.
+**3. Open the agent at http://localhost:4096 and say "set this project up".** The `sveet-setup` skill asks for the name, what the app does, where it runs, how mail goes out and who may sign up. It then rewrites the project to match and runs the tests.
 
-</details>
+## Working in the sandbox
 
-**Needs:** [bun](https://bun.com) ≥ 1.4.4. For deploys, [flyctl](https://fly.io/docs/flyctl/install/). For the sandbox, [microsandbox](https://microsandbox.dev) on Apple Silicon or Linux with KVM.
+The sandbox is a small Linux VM that holds the dev server, the tests and the coding agent. The agent runs without permission prompts, but it can only reach your project folder and the public internet. The folder is mounted live, so your editor sees every change. The agent can't see the rest of your machine, your SSH keys or credentials, or your local network.
+
+**Deploys deliberately stay outside.** `bun run deploy` refuses to run in the VM, so an agent can't ship to production by accident.
+
+| Command                        | Does                                                                        |
+| ------------------------------ | --------------------------------------------------------------------------- |
+| `bun run sandbox`              | Boot the VM (creating it the first time) and print the URLs                 |
+| `bun run sandbox restart`      | Restart the dev server (`opencode` or `all` for the others)                 |
+| `bun run sandbox logs`         | Follow the dev server log, where sign-in links appear (`logs opencode` too) |
+| `bun run sandbox agent [name]` | A terminal agent in the VM: `opencode` (default), `claude`, `codex`         |
+| `bun run sandbox shell`        | A shell inside the VM                                                       |
+| `bun run sandbox zed`          | Print the Zed settings for using the VM's agent over ACP                    |
+| `bun run sandbox stop` / `rm`  | Stop the VM / delete it, with its disks and agent logins                    |
+
+**The dev server is always running.** It starts with the sandbox, and a crash brings it back within a second. `bun run db:reset` empties the database in place, so the server picks up the fresh data without a restart. For anything else, run `bun run sandbox restart`. The command is the same on your machine and inside the VM, so the agent can run it too.
+
+### Agents
+
+- **opencode** is the default. It runs as a server in the VM with its web UI at http://localhost:4096, and `bun run sandbox agent` attaches a terminal to the same sessions. It works with almost any model provider: run `/connect` once and the login stays in the VM. It also comes with a few free models for trying it out.
+- **Claude Code**: `bun run sandbox agent claude`. A Claude Pro or Max subscription only works in Anthropic's own tools, not in opencode, so use this agent for it. Run `/login` once inside the VM.
+- **Codex**: `bun run sandbox agent codex`, with ChatGPT sign-in or an API key.
+
+Logins stay on the VM's disk until `bun run sandbox rm`.
+
+### Your editor with the VM's agent
+
+Editors that speak the [Agent Client Protocol](https://agentclientprotocol.com) can drive the agent inside the VM. Run `bun run sandbox zed` and paste the printed `agent_servers` block into Zed's settings. You keep Zed's agent panel, while the agent and every command it runs stay in the sandbox. The project is mounted at the same path in the VM as on your machine, so file paths match on both sides. If the sandbox isn't running, Zed boots it.
+
+### Without the sandbox
+
+Everything also runs directly on your machine with bun: `bun install && bun run setup && bun run dev`. The agent then has your user's full access, so keep its permission prompts on.
 
 ## Daily loop
 
-| Command                 | Does                                                        |
-| ----------------------- | ----------------------------------------------------------- |
-| `bun run dev`           | Dev server; sign-in links print to the console              |
-| `bun run verify`        | Lint + types + unit + e2e on the production build           |
-| `bun run db:generate`   | Migration from `src/lib/server/db/schema.ts`                |
-| `bun run db:reset`      | Fresh local DB from migrations + seed                       |
-| `bun run deploy`        | `verify`, then `fly deploy`                                 |
-| `bun run sandbox [cmd]` | The project in a microVM: `shell`, `dev`, `verify`, `agent` |
-| `bun run deps:update`   | Dependency updates, committed only if `verify` passes       |
+| Command               | Does                                                  |
+| --------------------- | ----------------------------------------------------- |
+| `bun run verify`      | Lint + types + unit + e2e on the production build     |
+| `bun run db:generate` | Migration from `src/lib/server/db/schema.ts`          |
+| `bun run db:reset`    | Empty the DB in place, migrate and seed               |
+| `bun run deploy`      | On your machine: `verify`, then `fly deploy`          |
+| `bun run deps:update` | Dependency updates, committed only if `verify` passes |
 
-The full list, the golden rules and the map of the code are in [AGENTS.md](AGENTS.md). It's written for agents and works just as well for humans.
+Sign in at `/login` with `ada@example.com` (seeded). The magic link shows up in `bun run sandbox logs`. The full list of commands, the golden rules and the map of the code are in [AGENTS.md](AGENTS.md).
 
 ## Skills
 
-Project skills live in `.agents/skills/` (and `.claude/skills/`). Agents load them on their own, or you can ask for one by name:
+Project skills live in `.agents/skills/`. opencode reads that folder directly, and `.claude/skills/` links to it. Agents load the skills on their own, or you can ask for one by name:
 
 - **`sveet-setup`**: interview, then personalize a fresh checkout
 - **`sveet-feature`**: spec → schema → seed → logic + tests → UI → e2e → verify
@@ -72,6 +107,8 @@ Project skills live in `.agents/skills/` (and `.claude/skills/`). Agents load th
 
 ## Deploy
 
+Run these on your machine, not in the sandbox:
+
 ```bash
 fly apps create <app>
 fly volumes create data --size 1 --region <region>
@@ -79,17 +116,7 @@ fly secrets set BETTER_AUTH_SECRET="$(openssl rand -base64 32)" SCW_SECRET_KEY=�
 bun run deploy
 ```
 
-The image is one compiled executable plus `drizzle/` on debian-slim, with no bun and no `node_modules` at runtime. It's plain Docker, so it runs anywhere a container does. `sveet-deploy` covers mail DNS, custom domains, scaling and backups.
-
-## Sandbox
-
-```bash
-brew install superradcompany/tap/microsandbox
-bun run sandbox          # first run creates the VM and sets it up, then opens a shell
-bun run sandbox agent    # Claude Code with --dangerously-skip-permissions, inside the VM
-```
-
-Your repo is mounted live. `node_modules`, build output and the SQLite file stay on VM-owned disks, so the host's install is untouched. An `ANTHROPIC_API_KEY` on the host goes in as a microsandbox secret, so the VM only ever sees a placeholder.
+The image is one compiled executable plus `drizzle/` on debian-slim, with no bun and no `node_modules` at runtime. It's plain Docker, so it runs anywhere a container does. The `sveet-deploy` skill covers mail DNS, custom domains, scaling, backups and other hosts.
 
 ## Updating
 

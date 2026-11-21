@@ -1,31 +1,19 @@
-# microsandbox (https://microsandbox.dev) — a microVM for this project.
-# Run it through `bun run sandbox` (scripts/sandbox.sh), which adds the mounts
-# below that YAML can't express yet:
-#   .             → /app            your source, live (bind mount)
-#   owned disk    → /app/node_modules  Linux-native deps; host's stay untouched
-#   owned disk    → /scratch        build output + SQLite (host mounts can't exec
-#                                    binaries or host SQLite's WAL reliably)
-# Use it to run dev/tests in a clean Linux box, or to let a coding agent work
-# with --dangerously-skip-permissions without access to the rest of your machine.
+# microsandbox (https://microsandbox.dev): the VM sveet projects are developed in.
+# Don't run it with msb directly; `bun run sandbox` (scripts/sandbox.sh) adds what
+# YAML can't express yet:
+#   <repo>              → same absolute path   your source, live (so editor/ACP paths match)
+#   owned disk          → <repo>/node_modules  Linux-native deps; the host's stay untouched
+#   owned disk          → /scratch             build output, SQLite, logs, agent logins
+#                                               (host mounts can't exec binaries in the VM)
+#   ports 5173 + 4096   → localhost            dev server + opencode
+# Network is the public internet; the host and your LAN are not reachable.
 image: oven/bun:1.4.4
 cpus: 4
-memory: 4G
-workdir: /app
+memory: 6G
 env:
+  SVEET_SANDBOX: '1'
+  HOME: /scratch/home
+  PATH: /scratch/home/.bun/bin:/scratch/home/.local/bin:/usr/local/bin:/usr/bin:/bin
   DATABASE_PATH: /scratch/local.db
   BUILD_DIR: /scratch/build
-  PATH: /root/.local/bin:/usr/local/bin:/usr/bin:/bin
-shell: /bin/bash
-scripts:
-  setup: |
-    set -e
-    bun install --frozen-lockfile
-    [ -f .env ] || bun scripts/setup.ts
-    bun run db:reset
-    bunx playwright install --with-deps chromium > /tmp/playwright-install.log 2>&1
-    echo "✓ sandbox ready — bun run sandbox dev | verify | agent | shell"
-  dev: bun run dev --host 0.0.0.0
-  verify: bun run verify
-  agent: |
-    command -v claude > /dev/null || curl -fsSL https://claude.ai/install.sh | bash
-    exec claude --dangerously-skip-permissions "$@"
+  PLAYWRIGHT_BROWSERS_PATH: /scratch/ms-playwright
