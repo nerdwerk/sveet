@@ -22,9 +22,9 @@ description: Adds or switches the transactional mail provider behind src/lib/ser
 
 ## Add a mail
 
-1. Write `render<Name>(input): Mail` next to `renderMagicLink`, returning subject, text and HTML. Escape every interpolated value in the HTML with `escapeHtml`. Keep the HTML table-based with inline styles, because mail clients ignore stylesheets.
+1. Write `render<Name>(input): Mail` next to `renderMagicLink`, returning `to`, `subject` and `text`. Plain text is the default. If the user wants HTML mail, add an `html` field to `Mail`, send it in each provider, and escape every interpolated value. Keep it table-based with inline styles, because mail clients ignore stylesheets.
 2. Call `mailer.send(renderX(…))` from server code. Catch `MailDeliveryError` wherever a failure must not break the user's action.
-3. Test the render (escaping, links present) and the call site with `createFakeMailer()`.
+3. Test the call site with `createFakeMailer()` when sending is part of a feature’s logic; a render with no branches needs no test.
 
 ## Mail isn't arriving
 

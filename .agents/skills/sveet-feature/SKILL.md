@@ -5,7 +5,7 @@ description: The build loop for any feature in a sveet project — spec, schema 
 
 # Build a feature the sveet way
 
-Small, tested steps. Happy path first. List the fancier version under "Not in scope" rather than building it.
+Small steps, happy path first, ponytail throughout (load the `ponytail` skill). List the fancier version under "Not in scope" rather than building it.
 
 ## 1. Spec (anything bigger than an afternoon)
 
@@ -26,11 +26,11 @@ Get the user's OK, then commit the spec on its own.
 2. `bun run db:generate`. Read the generated SQL. Never hand-edit `drizzle/`. A wrong migration that has not been deployed is deleted and regenerated. A wrong migration that has been deployed is fixed by a new one.
 3. Extend `src/lib/server/db/seed.ts` with fixed-id fixtures for the new table and export them. Then `bun run db:reset`.
 
-## 3. Server logic and unit tests
+## 3. Server logic
 
 - Put the rules in plain modules under `src/lib/server/<feature>/`: queries, validation, side effects. They take a `Db` argument, so tests can pass `createTestDb()`. Route files stay thin: parse input, call the module, return or `fail(…)`.
 - Validate every input on the server and cap lengths, even when the UI does too.
-- Tests sit next to the code (`*.test.ts`). Use `createTestDb()` for a migrated in-memory database and the seed fixtures for data. Use `createFakeMailer()` with `setMailer()` for anything that sends mail.
+- Unit-test only non-trivial logic (a branch that matters, parsing, money, security, permissions): one small `*.test.ts` next to the code, with `createTestDb()`, the seed fixtures and `createFakeMailer()`. Trivial code gets no test.
 - New env vars go in `src/env.ts` with a `description`, `.env.example` and, if needed in production, `fly.toml` (non-secret) or `fly secrets set` (secret).
 - Run `bun run test:unit --run <path>` while you iterate.
 
@@ -42,7 +42,7 @@ Get the user's OK, then commit the spec on its own.
 - Internal links use `resolve('/route')` from `$app/paths`.
 - Run the Svelte MCP `svelte-autofixer` (or the `svelte-code-writer` skill) on every component until it is clean.
 
-## 5. End-to-end test
+## 5. End-to-end test (always)
 
 Add a test under `tests/e2e/`. The `app` fixture gives each test its own seeded database and production server. `signIn(page, app, email)` signs in a seeded user. Select by role and label, the way users and agents find controls.
 

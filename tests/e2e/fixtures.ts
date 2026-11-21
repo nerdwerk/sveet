@@ -8,7 +8,6 @@ import { join } from 'node:path';
 
 type App = {
 	url: string;
-	/** The latest sign-in link the console mailer printed for this address. */
 	magicLink: (email: string) => Promise<string>;
 };
 
@@ -22,7 +21,6 @@ async function freePort() {
 }
 
 export const test = base.extend<{ app: App }>({
-	// Playwright requires a destructured first argument even when it is unused.
 	// eslint-disable-next-line no-empty-pattern
 	app: async ({}, use, testInfo) => {
 		const directory = await mkdtemp(join(tmpdir(), 'sveet-e2e-'));
@@ -36,7 +34,6 @@ export const test = base.extend<{ app: App }>({
 			BETTER_AUTH_SECRET: 'e2e-only-secret-never-used-in-production',
 			HOST: '127.0.0.1',
 			PORT: String(port),
-			// A built server sends real mail by default; tests read the console.
 			MAIL_TRANSPORT: 'console'
 		};
 

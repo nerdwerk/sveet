@@ -8,7 +8,6 @@ afterEach(() => {
 	clients.clear();
 });
 
-/** A fresh, fully migrated in-memory database — one per call, for test isolation. */
 export function createTestDb() {
 	const { client, db } = openDatabase(':memory:');
 	clients.add(client);

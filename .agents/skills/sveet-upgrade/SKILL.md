@@ -27,7 +27,7 @@ git diff --stat v<from> v<to>
 Sort the changed paths:
 
 - **Tooling, usually take**: `scripts/`, `Dockerfile`, `Sandboxfile`, `vite.config.ts`, `eslint.config.js`, `.githooks/`, `.github/`, `src/lib/server/db/client.ts`, `src/lib/server/mail.ts`, `src/env.ts` (merge in their variables), `.agents/skills/sveet-*`, the `AGENTS.md` sections on tooling.
-- **Starter content, usually skip**: `README.md`, `src/routes/**` and the example `note` code, `src/lib/app.ts`, `fly.toml` values (but do take new settings and comments), `static/`, `LICENSE`.
+- **Starter content, usually skip**: `README.md`, `src/routes/**`, `src/lib/app.ts`, `fly.toml` values (but do take new settings and comments), `static/`, `LICENSE`.
 - **Dependencies**: compare the `package.json` dependencies. Bump what sveet bumped unless the project pinned it on purpose. Then run `bun install`.
 - **Migrations**: never copy sveet's `drizzle/`. If sveet changed `auth.schema.ts` or the auth config, apply that change, then run `bun run auth:schema` and `bun run db:generate`, so the project gets its own migration.
 

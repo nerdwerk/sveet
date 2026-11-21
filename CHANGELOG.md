@@ -30,15 +30,16 @@ The agent-first release, shaped by building and running [onelink.ninja](https://
 - `Brewfile` for host prerequisites (bun, microsandbox, flyctl).
 - `bun run deploy` refuses to run inside the sandbox: production stays a human decision on the host.
 - `bun run db:reset` empties the database in place, so a running dev server picks up fresh data without a restart.
-- `opencode.jsonc` with the Svelte MCP; opencode reads `AGENTS.md` and `.agents/skills` itself.
+- **ponytail** (vendored skill + opencode plugin): agents write the least code that works. AGENTS.md maps its ladder onto sveet and sets the test bar: an e2e test per user-facing feature, unit tests only for non-trivial logic.
+- `opencode.jsonc` with the Svelte MCP and the ponytail plugin; opencode reads `AGENTS.md` and `.agents/skills` itself.
 - **Skills**: `sveet-setup`, `sveet-feature`, `sveet-deploy`, `sveet-mail`, `sveet-admin`, `sveet-upgrade`, plus `ui-sdk` (synced from the package) and the official `svelte-core-bestpractices` and `svelte-code-writer`.
 - `bun create nerdwerk/sveet my-app` runs `bun run setup` automatically.
 - Fly defaults from production: `ADDRESS_HEADER=Fly-Client-IP` and Better Auth's `fly-client-ip` (per-visitor rate limits), raised concurrency limits, a pinned bun image (1.4.4, CVE-2026-111497).
-- An example vertical slice: a `note` table, an account page, form actions, a seed and tests.
 
 ### Removed
 
-- devbox, Renovate (replaced by `deps:update`), shadcn-svelte and its skill, the demo routes, and `@types/node`.
+- devbox, Renovate (replaced by `deps:update`), shadcn-svelte and its skill, the demo routes, `@types/node`, `clsx`, `tailwind-merge`, `@lucide/svelte`, `cn()`, `.cursor/`, `.npmrc` and `.editorconfig`.
+- Sign-in mail is plain text (the `sveet-mail` skill adds HTML on request). The template ships no example data model: the account page only shows the email and signs out.
 
 ## [0.1.0] - 2026-06-14
 

@@ -1,8 +1,4 @@
-/**
- * `bun run db:reset` (followed by `db:seed`) — empties DATABASE_PATH in place
- * and migrates it. The file itself survives, so a running dev server keeps its
- * connection and simply sees fresh data: no restart needed.
- */
+// Empties the file instead of deleting it, so a running dev server keeps working on fresh data.
 import { applyMigrations, openDatabase } from './client.ts';
 
 const path = process.env.DATABASE_PATH;
@@ -17,11 +13,9 @@ const objects = client
 
 client.exec('PRAGMA foreign_keys = OFF;');
 client.transaction(() => {
-	for (const { type, name } of objects)
-		client.exec(`DROP ${type.toUpperCase()} IF EXISTS "${name}"`);
+	for (const { type, name } of objects) client.exec(`DROP ${type} IF EXISTS "${name}"`);
 })();
 client.exec('PRAGMA foreign_keys = ON;');
-
 applyMigrations(db);
 client.close();
-console.log(`✓ ${path} emptied (${objects.length} objects) and migrated`);
+console.log(`✓ ${path} emptied and migrated`);

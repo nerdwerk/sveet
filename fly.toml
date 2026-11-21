@@ -1,6 +1,4 @@
-# Fly.io config. The `sveet-setup` skill fills in `app`, `primary_region` and
-# ORIGIN; `sveet-deploy` walks through the first launch. Docs:
-# https://fly.io/docs/reference/configuration/
+# sveet-setup fills in app, region and ORIGIN; sveet-deploy does the first launch.
 app = 'sveet'
 primary_region = 'ams'
 
@@ -10,17 +8,13 @@ primary_region = 'ams'
   DATABASE_PATH = '/data/sqlite.db'
   ORIGIN = 'https://sveet.fly.dev'
   PORT = '3000'
-  # Fly's proxy sets this itself; without it getClientAddress() returns the
-  # proxy and every visitor shares one rate-limit bucket.
+  # Otherwise every visitor shares the proxy's IP and one rate-limit bucket.
   ADDRESS_HEADER = 'Fly-Client-IP'
-  # Sign-in links go out through Scaleway TEM. SCW_SECRET_KEY and
-  # SCW_DEFAULT_PROJECT_ID are `fly secrets`; the server won't start without them.
-  # Set MAIL_TRANSPORT = 'console' to log links instead while you set mail up.
+  # SCW_SECRET_KEY and SCW_DEFAULT_PROJECT_ID are `fly secrets`; use 'console' until mail is set up.
   MAIL_TRANSPORT = 'scaleway'
   MAIL_FROM = 'login@mail.example.com'
 
-# SQLite on a volume, which mounts on exactly one machine. A second machine
-# would get its own empty database: scale up, not out, until the database moves.
+# A volume mounts on one machine only: scale up, not out, while the data is SQLite.
 [[mounts]]
   source = 'data'
   destination = '/data'
@@ -28,14 +22,11 @@ primary_region = 'ams'
 [http_service]
   internal_port = 3000
   force_https = true
-  # Scale to zero while idle — cheap for side projects. Set to 'off' and
-  # min_machines_running = 1 once cold starts matter.
   auto_stop_machines = 'stop'
   auto_start_machines = true
   min_machines_running = 0
 
-  # Fly's default of 25 connections per machine is hit long before bun or
-  # SQLite are busy.
+  # Fly's default (25) is hit long before bun or SQLite are busy.
   [http_service.concurrency]
     type = 'requests'
     soft_limit = 200

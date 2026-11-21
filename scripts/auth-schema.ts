@@ -1,21 +1,13 @@
-/**
- * `bun run auth:schema` — regenerates src/lib/server/db/auth.schema.ts from the
- * Better Auth options, then puts back what the CLI drops: database-level
- * defaults on `created_at`/`updated_at`. The seed and tests insert users
- * without timestamps and rely on them. Run `db:generate` afterwards.
- *
- * The CLI is fetched with bunx on purpose — as a dependency it hoists an older
- * `@better-auth/core` that bun resolves first, which breaks the build.
- */
+// The CLI comes via bunx: as a dependency it hoists an older @better-auth/core that breaks the build.
 import { $ } from 'bun';
 
 const output = 'src/lib/server/db/auth.schema.ts';
 await $`bunx --bun @better-auth/cli@latest generate --config src/lib/server/auth-schema.config.ts --output ${output} --yes`;
 await $`bunx prettier --write ${output}`.quiet();
 
+// The CLI drops these DB defaults; the seed and tests insert users without timestamps.
 const now = ".default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)";
-let source = await Bun.file(output).text();
-source = source.replace(
+let source = (await Bun.file(output).text()).replace(
 	/(\b(?:createdAt|updatedAt): integer\('(?:created|updated)_at', \{ mode: 'timestamp_ms' \}\))(?!\s*\.default)/g,
 	`$1${now}`
 );
@@ -27,4 +19,4 @@ if (!/import \{[^}]*\bsql\b[^}]*\} from 'drizzle-orm'/.test(source)) {
 }
 await Bun.write(output, source);
 await $`bunx prettier --write ${output}`.quiet();
-console.log(`✓ ${output} regenerated — now run: bun run db:generate`);
+console.log(`✓ ${output} — now: bun run db:generate`);

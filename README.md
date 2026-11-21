@@ -18,7 +18,7 @@ One stack and one way to do each thing, with skills that teach your coding agent
 - **Vitest** (in-memory SQLite) and **Playwright** (the real build, a fresh database per test)
 - **Docker → Fly.io**, SQLite on a volume, migrations on start
 - **[microsandbox](https://microsandbox.dev)** dev VM with the dev server, tests and agents ([opencode](https://opencode.ai) by default)
-- **Agent tooling**: `AGENTS.md`, the Svelte MCP, and project skills
+- **Agent tooling**: `AGENTS.md`, the Svelte MCP, project skills, and [ponytail](https://ponytail.dev) so agents write the least code that works
 
 ## Start a project
 
@@ -93,17 +93,11 @@ Everything also runs directly on your machine with bun: `bun install && bun run 
 
 Sign in at `/login` with `ada@example.com` (seeded). The magic link shows up in `bun run sandbox logs`. The full list of commands, the golden rules and the map of the code are in [AGENTS.md](AGENTS.md).
 
-## Skills
+## How agents write code here
 
-Project skills live in `.agents/skills/`. opencode reads that folder directly, and `.claude/skills/` links to it. Agents load the skills on their own, or you can ask for one by name:
+Sveet ships as little as possible, because your agent can add what you need in seconds. The same goes for what agents write: [ponytail](https://ponytail.dev) makes them use what's already there (the codebase, the platform, ui-sdk, the installed libraries) before writing anything new. It's always on in opencode, and `AGENTS.md` tells Claude Code and other agents to load it. Every feature gets an e2e test of its happy path. Unit tests are only for logic that's worth testing.
 
-- **`sveet-setup`**: interview, then personalize a fresh checkout
-- **`sveet-feature`**: spec → schema → seed → logic + tests → UI → e2e → verify
-- **`sveet-deploy`**: first Fly launch, secrets, mail DNS, domains, scaling, production data
-- **`sveet-mail`**: another mail provider, or a new kind of mail
-- **`sveet-admin`**: health checks, superusers, an /admin area
-- **`sveet-upgrade`**: bring a newer sveet release into your project
-- plus `ui-sdk` (from the package itself) and the official Svelte skills
+Project skills (`.agents/skills/`) teach the flows: `sveet-setup`, `sveet-feature`, `sveet-deploy`, `sveet-mail`, `sveet-admin` and `sveet-upgrade`. See [AGENTS.md](AGENTS.md) for when each applies.
 
 ## Deploy
 

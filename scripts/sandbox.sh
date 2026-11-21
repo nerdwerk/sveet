@@ -12,8 +12,7 @@
 #   zed                  print the Zed settings that run the agent inside the VM
 #   stop | rm            stop the VM, or delete it with its disks (logins included)
 #
-# Host requirements: microsandbox (see Brewfile). Pure bash on purpose: it must
-# run before anything is installed. Deploys stay on the host; see scripts/deploy.sh.
+# Pure bash: it runs before anything is installed.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd -P)"
 cd "$ROOT"
@@ -119,7 +118,7 @@ EOF
 		exec msb rm "$NAME"
 		;;
 	*)
-		sed -n '2,15p' "$0" | sed 's/^# \{0,1\}//'
+		sed -n "2,13p" "$0" | sed 's/^# \{0,1\}//'
 		exit 1
 		;;
 esac

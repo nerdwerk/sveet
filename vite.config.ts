@@ -8,43 +8,20 @@ export default defineConfig({
 		tailwindcss(),
 		sveltekit({
 			compilerOptions: {
-				// Force runes mode for the project, except for libraries. Can be removed in svelte 6.
 				runes: ({ filename }) =>
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
-			// One self-contained executable at build/server: the app, its client
-			// assets, every dependency and the bun runtime. The Docker image ships
-			// that file plus drizzle/ and nothing else.
-			// `BUILD_DIR` only exists for the microsandbox, where host-mounted files
-			// can't be executed (see Sandboxfile).
-			adapter: adapter({
-				out: process.env.BUILD_DIR || 'build',
-				buildOptions: { compile: true }
-			})
+			// BUILD_DIR: the sandbox can't execute binaries on host-mounted folders.
+			adapter: adapter({ out: process.env.BUILD_DIR || 'build', buildOptions: { compile: true } })
 		})
 	],
-	// Inside the microsandbox VM the dev server must listen on every interface,
-	// or the port forward to the host's localhost:5173 has nothing to reach.
+	// In the sandbox, Vite must listen beyond the VM's own localhost for the port forward to reach it.
 	server: { host: process.env.SVEET_SANDBOX ? '0.0.0.0' : undefined, strictPort: true },
-	// bun:sqlite is a bun runtime builtin with no npm package behind it — keep it
-	// external so the server bundle imports it from the runtime. This is also why
-	// every script runs vite via `bun --bun`.
 	ssr: { external: ['bun:sqlite'] },
 	test: {
 		expect: { requireAssertions: true },
-		// Vitest's default `forks` pool expects Node's IPC channel, which bun
-		// doesn't implement; workers run as threads instead.
+		// The default `forks` pool needs Node's IPC channel, which bun lacks.
 		pool: 'threads',
-		projects: [
-			{
-				extends: './vite.config.ts',
-				test: {
-					name: 'server',
-					environment: 'node',
-					include: ['src/**/*.{test,spec}.{js,ts}'],
-					exclude: ['src/**/*.svelte.{test,spec}.{js,ts}']
-				}
-			}
-		]
+		include: ['src/**/*.test.ts']
 	}
 });

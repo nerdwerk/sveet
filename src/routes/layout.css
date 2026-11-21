@@ -1,9 +1,4 @@
-/*
- * The whole theme lives here. ui-sdk components read the `--ui-*` tokens, and
- * `@theme inline` hands the same tokens to Tailwind (`bg-background`,
- * `text-muted-foreground`, `border-border`, …), so components and utilities
- * can never disagree. Restyle by changing the tokens; check contrast after.
- */
+/* The whole theme: ui-sdk reads the --ui-* tokens, @theme inline hands them to Tailwind. */
 @layer ui-sdk;
 @import 'tailwindcss';
 @import '@ui-sdk/core/web.css' layer(components);
@@ -26,10 +21,7 @@
 
 @theme inline {
 	--font-sans: var(--ui-font-sans);
-	--radius-sm: calc(var(--ui-radius) - 4px);
-	--radius-md: calc(var(--ui-radius) - 2px);
 	--radius-lg: var(--ui-radius);
-	--radius-xl: calc(var(--ui-radius) + 4px);
 	--color-background: var(--ui-background);
 	--color-foreground: var(--ui-foreground);
 	--color-muted: var(--ui-muted);
@@ -46,7 +38,6 @@
 	* {
 		@apply border-border;
 	}
-
 	body {
 		@apply bg-background font-sans text-foreground antialiased;
 	}

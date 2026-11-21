@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
-# Runs INSIDE the sandbox VM; scripts/sandbox.sh calls it. Sets the VM up once
-# and supervises two services:
-#   dev       the Vite dev server            → host http://localhost:5173
-#   opencode  `opencode serve` + its web UI  → host http://localhost:4096
-# A crashed service comes back after a second. `restart` kills it on purpose.
+# Inside the VM: one-time setup, plus a supervisor that restarts `dev` and `opencode` when they exit.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -11,8 +7,7 @@ RUN=/scratch/run
 LOGS=/scratch/logs
 mkdir -p "$RUN" "$LOGS" "$HOME"
 
-# The bun image has no `node`; agent CLIs (codex, claude-agent-acp) launch
-# through it, and bun answers as a Node-compatible runtime.
+# The bun image has no `node`, which some agent CLIs launch through; bun stands in.
 mkdir -p "$HOME/.local/bin"
 [ -e "$HOME/.local/bin/node" ] || ln -s "$(command -v bun)" "$HOME/.local/bin/node"
 
@@ -37,8 +32,7 @@ start() {
 	local name=$1 cmd
 	cmd=$(service_cmd "$name")
 	alive "$RUN/$name.loop" && return 0
-	# The loop restarts the service when it exits. Each run gets its own process
-	# group (setsid), so a restart takes down Vite's or opencode's children too.
+	# Own process group per run, so a restart also kills the service's children.
 	setsid nohup bash -c "
 		while true; do
 			setsid bash -c '$cmd' &

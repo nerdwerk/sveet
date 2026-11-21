@@ -1,12 +1,4 @@
-# microsandbox (https://microsandbox.dev): the VM sveet projects are developed in.
-# Don't run it with msb directly; `bun run sandbox` (scripts/sandbox.sh) adds what
-# YAML can't express yet:
-#   <repo>              → same absolute path   your source, live (so editor/ACP paths match)
-#   owned disk          → <repo>/node_modules  Linux-native deps; the host's stay untouched
-#   owned disk          → /scratch             build output, SQLite, logs, agent logins
-#                                               (host mounts can't exec binaries in the VM)
-#   ports 5173 + 4096   → localhost            dev server + opencode
-# Network is the public internet; the host and your LAN are not reachable.
+# The dev VM. Run it through `bun run sandbox`, which adds the mounts and ports YAML can't express.
 image: oven/bun:1.4.4
 cpus: 4
 memory: 6G

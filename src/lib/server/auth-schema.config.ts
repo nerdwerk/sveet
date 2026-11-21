@@ -1,8 +1,4 @@
-/**
- * Entry point for `bun run auth:schema` only. The Better Auth CLI can't resolve
- * SvelteKit's `$app/*` modules, so it reads the shared options from here,
- * against a throwaway database, instead of `auth.ts`.
- */
+// Entry for `bun run auth:schema`: the Better Auth CLI can't resolve SvelteKit's `$app/*`.
 import { betterAuth } from 'better-auth/minimal';
 import { authOptions } from './auth-config.ts';
 import { openDatabase } from './db/client.ts';

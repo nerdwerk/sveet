@@ -18,11 +18,9 @@
 		"setup": "bun scripts/setup.ts",
 		"dev": "bun --bun vite dev",
 		"build": "bun --bun vite build",
-		"preview": "bun --bun vite preview",
 		"start": "./build/server",
 		"prepare": "svelte-kit sync || echo \"\"",
 		"check": "svelte-kit sync && svelte-check --tsgo --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsgo --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"test:unit": "bun --bun vitest",
@@ -39,21 +37,16 @@
 		"auth:schema": "bun scripts/auth-schema.ts",
 		"deps:update": "bash scripts/update-deps.sh",
 		"hooks:install": "git config core.hooksPath .githooks",
-		"prepush": "bun run verify",
 		"sandbox": "bash scripts/sandbox.sh"
 	},
 	"imports": {
-		"#lib": "./src/lib/index.js",
 		"#lib/*": "./src/lib/*"
 	},
 	"dependencies": {
-		"@lucide/svelte": "^1.77.0",
 		"@ui-sdk/core": "^0.1.0-beta.13",
 		"@ui-sdk/svelte": "^0.1.0-beta.13",
 		"better-auth": "^1.7.27",
-		"clsx": "^2.1.1",
-		"drizzle-orm": "^0.45.4",
-		"tailwind-merge": "^3.7.1"
+		"drizzle-orm": "^0.45.4"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
