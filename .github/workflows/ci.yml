@@ -17,3 +17,18 @@ jobs:
       - run: bunx playwright install --with-deps chromium
       # The same gate as the pre-push hook and `bun run deploy`.
       - run: bun run verify
+
+  # sveet's own release gate; only runs in the sveet repo.
+  sv-addon:
+    if: github.repository == 'nerdwerk/sveet'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+      - run: bunx playwright install --with-deps chromium
+      - run: bun install
+        working-directory: packages/sv
+      - run: bun run test
+        working-directory: packages/sv

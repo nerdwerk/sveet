@@ -30,3 +30,7 @@ playwright-report
 
 # bun compile temp files
 *.bun-build
+
+# sv add-on build output
+packages/sv/dist
+packages/sv/src/template.json

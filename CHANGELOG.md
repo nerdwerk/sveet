@@ -27,6 +27,7 @@ The agent-first release, shaped by building and running [onelink.ninja](https://
 - `bun run deps:update`: in-range updates, committed only when `verify` passes.
 - `bun run auth:schema` restores the timestamp defaults the Better Auth CLI drops.
 - **The sandbox is the default way to work.** `bun run sandbox` boots a microsandbox VM (`Sandboxfile`, `scripts/sandbox.sh` + `scripts/sandbox-vm.sh`) that runs the dev server and **opencode** (`opencode serve` + web UI on :4096, password-protected) under a small supervisor that restarts crashed services. Other commands: `restart`, `logs`, `agent [opencode|claude|codex]` (no permission prompts), `acp [opencode|claude]` for editors, `zed` (prints the Zed `agent_servers` config), `shell`, `stop`, `rm`. The repo is mounted at the same path as on the host; `node_modules` and `/scratch` (build, SQLite, logs, logins) are VM-owned disks.
+- **sv support**: `@nerdwerk/sv`, a community add-on for the Svelte CLI (`npx sv create my-app --template minimal --types ts --add @nerdwerk --install bun`). It packs this repo’s files at build time, so `sv create` and `bun create` produce the same project. Its release gate (`packages/sv/test.sh`) runs `sveet`’s full `verify` in a freshly created project.
 - `Brewfile` for host prerequisites (bun, microsandbox, flyctl).
 - `bun run deploy` refuses to run inside the sandbox: production stays a human decision on the host.
 - `bun run db:reset` empties the database in place, so a running dev server picks up fresh data without a restart.

@@ -33,7 +33,7 @@ The sandbox runs on Apple Silicon Macs, or on Linux with KVM.
 **2. Create the project and boot its sandbox:**
 
 ```bash
-bun create nerdwerk/sveet my-app
+bun create nerdwerk/sveet my-app   # or with the Svelte CLI, see below
 cd my-app
 bun run sandbox
 ```
@@ -118,7 +118,15 @@ A sveet project is a copy, not a dependency, so updates are a merge. `package.js
 
 ## The Svelte CLI
 
-`sv create` has no remote templates; it extends projects through [community add-ons](https://svelte.dev/docs/cli/community). See [docs/sv.md](docs/sv.md) for the plan to ship sveet as `bunx sv create --add @nerdwerk/sveet`.
+Sveet is also an [sv community add-on](https://svelte.dev/docs/cli/community). sv scaffolds its minimal SvelteKit project, and the add-on turns it into the same sveet project you get from `bun create`:
+
+```bash
+npx sv create my-app --template minimal --types ts --add @nerdwerk --install bun
+# bun only:
+bunx -p sv -p @nerdwerk/sv sv create my-app --template minimal --types ts --add @nerdwerk --install bun
+```
+
+Then `cd my-app && bun run sandbox`, as above. The add-on has the same version as the template it was built from.
 
 ## Variants
 

@@ -12,7 +12,8 @@ You are turning the sveet starter into the user's project. Ask first, change sec
 1. Confirm you are at the repo root and `package.json` has `"sveet": { "version": … }`. Note that version.
 2. Run `git status`. If there are uncommitted changes, ask before continuing.
 3. Check `SVEET_SANDBOX`. If it is set, you are in the sandbox (the usual case): the dev server is already running at http://localhost:5173 and restarts with `bun run sandbox restart`. `fly` commands are not available, so list them for the user to run on the host. If it is not set, the user is working on the host directly.
-4. If `node_modules` is missing, run `bun install`. If `.env` is missing, run `bun run setup` (creates `.env`, migrates, seeds).
+4. Delete `packages/` and `docs/` if they exist: they are sveet’s own release tooling (`bun create` and the sv add-on already leave them out).
+5. If `node_modules` is missing, run `bun install`. If `.env` is missing, run `bun run setup` (creates `.env`, migrates, seeds).
 
 ## 1. Interview
 
