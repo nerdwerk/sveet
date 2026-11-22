@@ -32,22 +32,40 @@ command -v msb > /dev/null || {
 	exit 1
 }
 
-PROJECT="$(sed -n 's/^[[:space:]]*"name":[[:space:]]*"\([^"]*\)".*/\1/p' package.json | head -1)"
-NAME="${SANDBOX_NAME:-${PROJECT:-app}-sandbox}"
+# From the path, not package.json: fresh checkouts are all named "sveet" and must not share a VM.
+NAME="${SANDBOX_NAME:-$(basename "$ROOT" | tr -c 'a-zA-Z0-9-\n' '-')-$(printf %s "$ROOT" | cksum | cut -c1-6)}"
 
 vm() { msb exec --no-stdin -w "$ROOT" "$NAME" -- bash scripts/sandbox-vm.sh "$@"; }
 exists() { msb inspect "$NAME" < /dev/null > /dev/null 2>&1; }
 
+running() { msb ls < /dev/null 2> /dev/null | grep -q "^$NAME .*running"; }
+
+ports_free() {
+	local port
+	for port in 5173 4096; do
+		if (: < "/dev/tcp/127.0.0.1/$port") 2> /dev/null; then
+			echo "✋ Port $port is already in use, probably by another project's sandbox." >&2
+			echo "   See what's running with \`msb ls\`, stop it with \`msb stop <name>\`, then retry." >&2
+			return 1
+		fi
+	done
+}
+
 ensure_up() {
 	if ! exists; then
+		ports_free
 		echo "→ creating sandbox $NAME (first run takes a few minutes)" >&2
-		msb create --conf Sandboxfile --name "$NAME" -w "$ROOT" \
+		if ! msb create --conf Sandboxfile --name "$NAME" -w "$ROOT" \
 			-v "$ROOT:$ROOT" \
 			--mount-owned "$ROOT/node_modules:kind=disk,size=8G" \
 			--mount-owned /scratch:kind=disk,size=16G \
-			-p 5173:5173 -p 4096:4096 < /dev/null > /dev/null
-	else
-		msb start "$NAME" < /dev/null > /dev/null 2>&1 || true
+			-p 5173:5173 -p 4096:4096 < /dev/null > /dev/null; then
+			msb rm "$NAME" < /dev/null > /dev/null 2>&1 || true
+			exit 1
+		fi
+	elif ! running; then
+		ports_free
+		msb start "$NAME" < /dev/null > /dev/null
 	fi
 	vm up >&2
 }
