@@ -12,7 +12,8 @@
 		"version": "1.0.0-rc.2"
 	},
 	"bun-create": {
-		"postinstall": "rm -rf packages docs && bun run setup"
+		"postinstall": "rm -rf packages docs && bun run setup",
+		"start": "bun run sandbox"
 	},
 	"scripts": {
 		"setup": "bun scripts/setup.ts",
