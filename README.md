@@ -12,9 +12,9 @@ bun run sandbox
 # → open http://localhost:4096 and say "set this project up"
 ```
 
-If that made you curious, here's why it exists.
+If that made you curious, here's why Sveet exists.
 
-While most things now are agent-first, this README is human-first, so please take your time to really read this. A human wrote this (me).
+While most things now are agent-first, this README is **human-first**, so please take your time to really read this. A human wrote this (me).
 
 I've built a few production-grade apps with agents over the last couple of months, and I poured that experience PLUS years of general development and SaaS experience into Sveet. My little ninja [onelink.ninja](https://onelink.ninja) 🥷 runs on it, and whatever it learns in production flows back here.
 
@@ -54,9 +54,9 @@ So you might be asking what's included to make this thing delicious like candy �
 
 ## Getting started
 
-All that probably sounds nice already, so here's the fastest way to get you started.
+All that hopefully sounds nice already and you want to get started, so here's the fastest way to do that.
 
-**Requirements:** an Apple Silicon Mac, or Linux with KVM (that's what the sandbox runs on).
+**Requirements:** an Apple Silicon Mac, or Linux with KVM (that's what the sandbox runs on) if you want to use the default sandbox. Working without it is still an option though.
 
 **1. Install what Sveet needs on your machine:** [bun](https://bun.com), [microsandbox](https://microsandbox.dev) (the dev VM) and, for deploys, [flyctl](https://fly.io/docs/flyctl/install/) (optional, but give it a shot if you don't know Fly yet). Either download the [Brewfile](https://raw.githubusercontent.com/nerdwerk/sveet/main/Brewfile) and run `brew bundle` next to it, or run:
 
@@ -93,7 +93,13 @@ Then `cd my-app && bun run sandbox`, as above. The add-on has the same version a
 
 ## Working in the sandbox (read this one) 👁️👄👁️
 
-Okay, here's really the technical part of this. While of course you can run the whole thing outside of the sandbox, it's good practice today to get into sandboxing things. Especially if you plan to use skills from all kinds of strangers. It's dangerous to go alone! Take this. ⚔️
+Okay, here's really the technical part of this. While of course you can run the whole thing outside of the sandbox, it's good practice today to get into sandboxing things. Especially if you plan to use skills from all kinds of strangers. 
+
+```
+    ┌────────────────────────────────────────────┐
+👴🏼 <   It's dangerous to go alone! Take this. ⚔️ │
+    └────────────────────────────────────────────┘
+```
 
 The sandbox is a small Linux VM that holds the dev server, the tests and the coding agent. The agent runs without permission prompts, but it can only reach your project folder and the public internet. The folder is mounted live, so your editor sees every change. The agent can't see the rest of your machine, your SSH keys or credentials, or your local network.
 
@@ -115,7 +121,7 @@ Here are all the commands to find your way around the sandbox:
 
 ### How to work with agents
 
-- **opencode** is the default. It runs as a server in the VM with its web UI at http://localhost:4096, and `bun run sandbox agent` attaches a terminal to the same sessions. It works with almost any model provider: run `/connect` once and the login stays in the VM. It also comes with a few free models for trying it out.
+- **opencode** is the default. It runs as a server in the VM with its web UI at `http://localhost:4096`, and `bun run sandbox agent` attaches a terminal to the same sessions. It works with almost any model provider: run `/connect` once and the login stays in the VM. It also comes with a few free models for trying it out.
 - **Claude Code**: `bun run sandbox agent claude`. A Claude Pro or Max subscription only works in Anthropic's own tools, not in opencode, so use this agent for it. Run `/login` once inside the VM.
 - **Codex**: `bun run sandbox agent codex`, with ChatGPT sign-in or an API key.
 
@@ -125,7 +131,7 @@ Here are all the commands to find your way around the sandbox:
 
 ### Your editor with the VM's agent
 
-Editors that speak the [Agent Client Protocol](https://agentclientprotocol.com) can drive the agent inside the VM. I use Zed for that, and highly recommend that editor. Run `bun run sandbox zed` and paste the printed `agent_servers` block into Zed's settings. You keep Zed's agent panel, while the agent and every command it runs stay in the sandbox. The project is mounted at the same path in the VM as on your machine, so file paths match on both sides. If the sandbox isn't running, Zed boots it.
+Editors that speak the [Agent Client Protocol](https://agentclientprotocol.com) can drive the agent inside the VM. I use [Zed](https://zed.dev/) for that, and highly recommend that editor. Run `bun run sandbox zed` and paste the printed `agent_servers` block into Zed's settings. You keep Zed's agent panel, while the agent and every command it runs stay in the sandbox. The project is mounted at the same path in the VM as on your machine, so file paths match on both sides. If the sandbox isn't running, Zed boots it.
 
 Contributions for other editors and setups are welcome 🤓
 
@@ -153,11 +159,11 @@ Sveet ships as little as possible, because your agent can add what you need in s
 
 For customization, as stated above, instead of all kinds of plugins and demo code, we ship some skills.
 
-Project skills (`.agents/skills/`) teach the flows: `sveet-setup`, `sveet-feature`, `sveet-deploy`, `sveet-mail`, `sveet-admin` and `sveet-upgrade`. See [AGENTS.md](AGENTS.md) for when each applies. But your agents already know what to do.
+Project skills (`.agents/skills/`) teach the flows: `sveet-setup`, `sveet-feature`, `sveet-deploy`, `sveet-mail`, `sveet-admin` and `sveet-upgrade`. See [AGENTS.md](AGENTS.md) for when each applies. But your agents already know what to do. 🤖🧠
 
 ## Deployments
 
-Feel free to customize, but here I'll lay out how to get stuff shipped to fly.io.
+Feel free to customize, but here I'll lay out how to get stuff shipped to fly.io. That said, I am looking to find a full european solution for this with a similarly nice dev experience.
 
 `fly.toml` ships with the app name and `ORIGIN` empty, on purpose: fly refuses to deploy until they're set, so nothing ships under the wrong name. `sveet-setup` fills them in for you. Then run these on your machine, not in the sandbox:
 
