@@ -93,7 +93,7 @@ Then `cd my-app && bun run sandbox`, as above. The add-on has the same version a
 
 ## Working in the sandbox (read this one) 👁️👄👁️
 
-Okay, here's really the technical part of this. While of course you can run the whole thing outside of the sandbox, it's good practice today to get into sandboxing things. Especially if you plan to use skills from all kinds of strangers. 
+Okay, here's really the technical part of this. While of course you can run the whole thing outside of the sandbox, it's good practice today to get into sandboxing things. Especially if you plan to use skills from all kinds of strangers.
 
 ```
     ┌────────────────────────────────────────────┐
