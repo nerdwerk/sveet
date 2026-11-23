@@ -182,7 +182,7 @@ A Sveet project is a copy, not a dependency, so updates are a merge. That's on p
 
 ## Support Sveet 🍭
 
-Sveet is free and MIT licensed, and it stays that way. If it saves you time and you want to give something back, you can support my work on [Patreon](https://www.patreon.com/nerdwerk). It keeps me shipping these things, useful tools and explore new products and ideas. 
+Sveet is free and MIT licensed, and it stays that way. If it saves you time and you want to give something back, you can support my work on [Patreon](https://www.patreon.com/nerdwerk). It keeps me shipping these things, useful tools and explore new products and ideas.
 Thank you! 💜
 
 ## License
