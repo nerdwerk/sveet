@@ -29,7 +29,7 @@
 		"access": "public"
 	},
 	"scripts": {
-		"build": "bun scripts/pack.ts && tsdown",
+		"build": "bun scripts/pack.ts && bun build src/index.js --outfile dist/index.mjs --target node --packages external",
 		"test": "bash test.sh",
 		"prepublishOnly": "bun run build"
 	},
@@ -37,7 +37,6 @@
 		"sv": "^1.7.0"
 	},
 	"devDependencies": {
-		"sv": "^1.7.0",
-		"tsdown": "^0.23.7"
+		"sv": "^1.7.0"
 	}
 }
