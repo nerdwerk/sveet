@@ -79,7 +79,7 @@ The first boot takes a few minutes, because it installs the dependencies, the te
   Agent     http://localhost:4096   user: opencode   password: …
 ```
 
-**3. Open the agent at http://localhost:4096 and say "set this project up".** The `sveet-setup` skill asks for the name, what the app does, where it runs, how mail goes out and who may sign up. It then rewrites the project to match and runs the tests. Yes, it's that easy!
+**3. Open the agent at http://localhost:4096 and say "set this project up".** The `sveet-setup` skill asks for a name and a one-liner, then whether you want to deploy, how mail goes out and who will use it. Just trying things out? Say "no need to deploy" or "just the defaults" and you're done after two questions. Everything can be changed later. It then rewrites the project to match and runs the tests. Yes, it's that easy!
 
 ## The Svelte CLI
 
@@ -179,6 +179,11 @@ The image is one compiled executable plus `drizzle/` on debian-slim, with no bun
 ## Updating
 
 A Sveet project is a copy, not a dependency, so updates are a merge. That's on purpose: you own every line, so nothing changes under your feet. `package.json` records the release you started from (`sveet.version`). Ask your agent to **"upgrade sveet"**: the `sveet-upgrade` skill diffs that release against the newest one and applies the parts that fit your project, such as tooling, fixes and skills.
+
+## Support Sveet 🍭
+
+Sveet is free and MIT licensed, and it stays that way. If it saves you time and you want to give something back, you can support my work on [Patreon](https://www.patreon.com/nerdwerk). It keeps me shipping these things, useful tools and explore new products and ideas. 
+Thank you! 💜
 
 ## License
 
