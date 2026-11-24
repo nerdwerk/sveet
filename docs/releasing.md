@@ -9,18 +9,13 @@ A release has two artifacts that must match:
 
 ## Steps
 
-1. Update `CHANGELOG.md` and set the version in **both** `package.json` → `sveet.version` and `packages/sv/package.json` → `version`. The add-on build refuses to run if they differ.
-2. Commit, then run the gates:
+1. In a commit or PR: add a `## [X.Y.Z]` section to `CHANGELOG.md` and set the version in **both** `package.json` → `sveet.version` and `packages/sv/package.json` → `version`. Merge it to `main`.
+2. On `main` in your usual checkout, run:
    ```sh
-   bun run verify
-   cd packages/sv && bun install && bun run test   # sv create --add <local add-on>, then verify in the new project
+   packages/sv/release.sh   # needs `bunx npm login` as a member of the nerdwerk org
    ```
-3. Tag and push: `git tag vX.Y.Z && git push origin main vX.Y.Z`.
-4. Publish the add-on from a clean checkout of the tag (`prepublishOnly` rebuilds it):
-   ```sh
-   cd packages/sv && bunx npm publish --access public   # needs `bunx npm login` as a member of the nerdwerk org
-   ```
-5. Smoke-test the published package with both commands from the README, in an empty folder.
+   It checks the versions, changelog, branch and npm login first, runs `verify` and the add-on test (`sv create --add` with the local add-on, then `verify` in the new project), then tags `vX.Y.Z`, pushes `main` and the tag, and publishes `@nerdwerk/sv`. If something fails halfway, fix it and run it again: it skips what's already done.
+3. Smoke-test the published package with both commands from the README, in an empty folder.
 
 ## Known issue: first run under bunx
 
