@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="static/sveet_logo.png" alt="Sveet logo" width="400">
+  <img src="static/sveet-logo.png" alt="Sveet logo" width="400">
 </p>
 
 # Sveet
