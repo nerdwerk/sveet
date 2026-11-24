@@ -45,7 +45,7 @@ Make these edits; skip what the answers don't touch.
 - **`README.md`**: replace it with the project's own README: name, tagline, a "Development" section (`bun install`, `bun run setup`, `bun run dev`), a short "Deploy" section, and a line "Started from [sveet](https://github.com/nerdwerk/sveet) vX.Y.Z". Point to `AGENTS.md` for the details.
 - **`CHANGELOG.md`**: reset it to a single `## [Unreleased]` section.
 - **`LICENSE`**: update the holder and year, or delete it.
-- **`static/`**: replace `sveet_logo.png` and `src/lib/assets/favicon.svg` if the user has their own. Otherwise leave them and mention it.
+- **`static/`**: replace `sveet-logo.png` and `src/lib/assets/favicon.svg` if the user has their own. Otherwise leave them and mention it.
 - **Landing page** `src/routes/+page.svelte`: replace the "Next steps" list with a short hero for their product, or leave it and say so. Either way, drop the "Personalize" step: setup is done.
 - **Git**: keep sveet reachable for upgrades:
   ```sh

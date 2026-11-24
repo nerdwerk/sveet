@@ -13,8 +13,10 @@
 			property="og:description"
 			content="SvelteKit + SQLite, a sandbox for your agents, and skills instead of plugins. Sweet like candy 🍭"
 		/>
-		<meta property="og:image" content="https://nerdwerk.github.io/sveet/sveet-mark.png" />
-		<link rel="icon" href="favicon.png" />
+		<meta property="og:image" content="https://nerdwerk.github.io/sveet/sveet-logo.png" />
+		<link rel="icon" href="favicon.ico" sizes="32x32" />
+		<link rel="icon" href="favicon.png" type="image/png" />
+		<link rel="apple-touch-icon" href="apple-touch-icon.png" />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
@@ -189,8 +191,18 @@
 			}
 			.hero .mark {
 				width: min(340px, 75vw);
-				mix-blend-mode: multiply;
+				height: auto;
+				filter: drop-shadow(0 18px 24px rgba(80, 30, 0, 0.18));
 				animation: bob 5s ease-in-out infinite;
+			}
+			.burst {
+				background: none;
+				border: 0;
+				padding: 0;
+				cursor: pointer;
+			}
+			.burst:active .mark {
+				scale: 0.95;
 			}
 			@keyframes bob {
 				50% {
@@ -221,11 +233,21 @@
 				margin-top: 28px;
 			}
 			.sprinkle {
-				position: absolute;
+				position: fixed;
+				z-index: 5;
+				pointer-events: none;
 				width: 22px;
 				height: 7px;
 				border-radius: 4px;
 				opacity: 0.85;
+			}
+			.sprinkle.float {
+				animation: float 6s ease-in-out infinite;
+			}
+			@keyframes float {
+				50% {
+					translate: 0 -14px;
+				}
 			}
 
 			/* terminal */
@@ -325,6 +347,7 @@
 
 			/* quote */
 			.quote {
+				margin: 0;
 				background: var(--paper);
 				border-left: 5px solid var(--orange);
 				border-radius: 0 var(--radius) var(--radius) 0;
@@ -371,6 +394,26 @@
 			.stack strong {
 				color: var(--ink);
 				font-weight: 600;
+			}
+
+			/* heads-up */
+			.note {
+				display: flex;
+				gap: 14px;
+				align-items: flex-start;
+				margin-top: 28px;
+				padding: 18px 22px;
+				max-width: 780px;
+				background: color-mix(in srgb, var(--yellow) 22%, var(--paper));
+				border: 2px solid var(--yellow);
+				border-radius: 14px;
+			}
+			.note .icon {
+				font-size: 1.5rem;
+				line-height: 1.2;
+			}
+			.note p {
+				margin: 0;
 			}
 
 			/* steps */
@@ -478,14 +521,39 @@
 				list-style: none;
 			}
 			.skills li {
+				position: relative;
 				font-family: 'JetBrains Mono', monospace;
 				font-size: 0.9rem;
-				padding: 8px 16px;
 				border-radius: 999px;
 				background: var(--paper);
 				border: 1px solid var(--line);
 			}
-			.skills li::before {
+			.skills summary {
+				padding: 8px 16px;
+				list-style: none;
+				cursor: help;
+			}
+			.skills summary::-webkit-details-marker {
+				display: none;
+			}
+			.skills p {
+				position: absolute;
+				z-index: 6;
+				top: calc(100% + 8px);
+				left: 0;
+				width: max-content;
+				max-width: 280px;
+				margin: 0;
+				padding: 10px 14px;
+				border-radius: 12px;
+				background: var(--code-bg);
+				color: var(--code-ink);
+				font:
+					0.88rem/1.45 Inter,
+					sans-serif;
+				box-shadow: 0 12px 30px -12px rgba(80, 30, 0, 0.5);
+			}
+			.skills summary::before {
 				content: '';
 				display: inline-block;
 				width: 8px;
@@ -507,10 +575,20 @@
 					grid-template-columns: 1fr;
 				}
 			}
+			.fit .card {
+				border: 0;
+				color: #fff;
+			}
+			.fit .yes {
+				background: #12786e;
+			}
+			.fit .no {
+				background: #b8326b;
+			}
 			.fit ul {
 				margin: 0;
 				padding-left: 1.2em;
-				color: var(--muted);
+				color: rgba(255, 255, 255, 0.92);
 			}
 			.fit li {
 				margin: 6px 0;
@@ -547,7 +625,8 @@
 			}
 
 			@media (prefers-reduced-motion: reduce) {
-				.hero .mark {
+				.hero .mark,
+				.sprinkle.float {
 					animation: none;
 				}
 				.btn {
@@ -568,40 +647,44 @@
 			</div>
 		</nav>
 
+		<span
+			class="sprinkle float"
+			style="background: var(--teal); top: 14%; left: 5%; rotate: 30deg"
+		></span>
+		<span
+			class="sprinkle float"
+			style="background: var(--yellow); top: 34%; left: 12%; rotate: -20deg; animation-delay: -2s"
+		></span>
+		<span
+			class="sprinkle float"
+			style="background: var(--pink); top: 70%; left: 4%; rotate: 70deg; animation-delay: -4s"
+		></span>
+		<span
+			class="sprinkle float"
+			style="background: var(--blue); top: 18%; right: 8%; rotate: -40deg; animation-delay: -1s"
+		></span>
+		<span
+			class="sprinkle float"
+			style="background: var(--teal); top: 48%; right: 4%; rotate: 15deg; animation-delay: -3s"
+		></span>
+		<span
+			class="sprinkle float"
+			style="background: var(--yellow); top: 82%; right: 12%; rotate: -65deg; animation-delay: -5s"
+		></span>
+
 		<header class="hero" id="top">
-			<span
-				class="sprinkle"
-				style="background: var(--teal); top: 12%; left: 9%; rotate: 30deg"
-			></span>
-			<span
-				class="sprinkle"
-				style="background: var(--yellow); top: 28%; left: 18%; rotate: -20deg"
-			></span>
-			<span
-				class="sprinkle"
-				style="background: var(--pink); top: 62%; left: 6%; rotate: 70deg"
-			></span>
-			<span
-				class="sprinkle"
-				style="background: var(--blue); top: 16%; right: 11%; rotate: -40deg"
-			></span>
-			<span
-				class="sprinkle"
-				style="background: var(--teal); top: 44%; right: 7%; rotate: 15deg"
-			></span>
-			<span
-				class="sprinkle"
-				style="background: var(--yellow); top: 72%; right: 16%; rotate: -65deg"
-			></span>
 			<div class="wrap">
-				<img class="mark" src="sveet-logo.png" alt="Sveet candy logo" width="480" height="408" />
+				<button class="burst" aria-label="Sprinkle some candy">
+					<img class="mark" src="sveet-logo.png" alt="Sveet candy logo" width="462" height="462" />
+				</button>
 				<h1>Sveet</h1>
-				<p class="tag">The opinionated, agent-first SvelteKit starter that's sweet like candy 🍭</p>
+				<p class="tag">The opinionated agent-first SvelteKit starter kit, sweet as candy 🍬</p>
 				<p class="lede">
-					SvelteKit + SQLite, a sandbox your agents can't escape, and skills instead of plugins. It
-					runs
-					<a href="https://onelink.ninja">onelink.ninja</a> in production, and whatever that learns
-					flows back here.
+					SvelteKit + SQLite, a sandbox your agents can't escape. Skills instead of plugins. Built
+					from years of experience in building software, and hands-on experience in shipping
+					products with Agents. Sveet is powering
+					<a href="https://onelink.ninja" target="_blank">onelink.ninja</a> and more in production,
+					and all learnings flows back here.
 				</p>
 				<div class="term">
 					<div class="bar">
@@ -662,13 +745,27 @@
 						</p>
 					</div>
 				</div>
-				<blockquote class="quote" style="margin: 48px 0 0">
-					<p>
-						“I kept bootstrapping from the default SvelteKit setup, grabbing for the same tech
-						decisions again and again. So I built the starter kit I wish I had found.”
-					</p>
-					<footer>— Roman, <a href="https://github.com/nerdwerk">Nerdwerk</a></footer>
-				</blockquote>
+				<div class="grid" style="margin-top: 48px">
+					<blockquote class="quote">
+						<p>
+							“I kept bootstrapping from the default SvelteKit setup, grabbing for the same tech
+							decisions again and again. So I built the starter kit I wish I had found.”
+						</p>
+						<footer>— Roman, <a href="https://github.com/nerdwerk">Nerdwerk</a></footer>
+					</blockquote>
+					<blockquote class="quote" style="border-color: var(--teal)">
+						<p>
+							“Honestly I went into the [repo] with the obligatory ‘Who needs starter [templates]
+							these days’, but I could definitely see the reasoning behind this.”
+						</p>
+						<footer>
+							— deadneon4 on
+							<a href="https://www.reddit.com/r/sveltejs/comments/1y3tjkq/comment/19t3bfymbq1c4/"
+								>r/sveltejs</a
+							>
+						</footer>
+					</blockquote>
+				</div>
 			</div>
 		</section>
 
@@ -743,6 +840,15 @@
 						>
 					</div>
 				</div>
+				<div class="note">
+					<span class="icon">🍬</span>
+					<p>
+						<strong>Defaults, not handcuffs.</strong> Picks like Scaleway and Fly.io are
+						opinionated, sensible defaults so you can ship on day one. Want Resend, Postmark,
+						Railway or your own box? Eject and swap them: the <code>sveet-mail</code> and
+						<code>sveet-deploy</code> skills walk your agent through it.
+					</p>
+				</div>
 			</div>
 		</section>
 
@@ -750,10 +856,15 @@
 			<div class="wrap">
 				<div class="eyebrow">Getting started</div>
 				<h2>Three steps. The agent does the rest.</h2>
-				<p class="lede">
-					You need an Apple Silicon Mac or Linux with KVM for the sandbox. Working without it is
-					still an option.
-				</p>
+				<div class="note">
+					<span class="icon">💡</span>
+					<p>
+						<strong>Heads-up: the sandbox is optional.</strong> It needs an Apple Silicon Mac or
+						Linux with KVM. Elsewhere, skip it and run everything with bun on your machine:
+						<code>bun install && bun run setup && bun run dev</code>. Your agent then has your
+						user's full access, so keep its permission prompts on.
+					</p>
+				</div>
 				<div class="steps">
 					<div class="step">
 						<h3>Install the tools</h3>
@@ -878,14 +989,60 @@
 					<code>bun run verify</code> passed. Project skills teach the flows:
 				</p>
 				<ul class="skills">
-					<li style="--c: var(--orange)">sveet-setup</li>
-					<li style="--c: var(--teal)">sveet-feature</li>
-					<li style="--c: var(--yellow)">sveet-deploy</li>
-					<li style="--c: var(--blue)">sveet-mail</li>
-					<li style="--c: var(--pink)">sveet-admin</li>
-					<li style="--c: var(--orange)">sveet-upgrade</li>
-					<li style="--c: var(--teal)">ponytail</li>
-					<li style="--c: var(--yellow)">ui-sdk</li>
+					<li style="--c: var(--orange)">
+						<details name="skill">
+							<summary>sveet-setup</summary>
+							<p>
+								Interviews you, then turns a fresh checkout into your own named, configured project.
+							</p>
+						</details>
+					</li>
+					<li style="--c: var(--teal)">
+						<details name="skill">
+							<summary>sveet-feature</summary>
+							<p>
+								The build loop for every feature: spec, schema, server logic, UI, tests, verify.
+							</p>
+						</details>
+					</li>
+					<li style="--c: var(--yellow)">
+						<details name="skill">
+							<summary>sveet-deploy</summary>
+							<p>Ships to Fly.io and handles secrets, domains, rollbacks and production backups.</p>
+						</details>
+					</li>
+					<li style="--c: var(--blue)">
+						<details name="skill">
+							<summary>sveet-mail</summary>
+							<p>Swaps in your mail provider of choice and adds new kinds of mail.</p>
+						</details>
+					</li>
+					<li style="--c: var(--pink)">
+						<details name="skill">
+							<summary>sveet-admin</summary>
+							<p>Adds health checks, shell-only superusers and a minimal admin dashboard.</p>
+						</details>
+					</li>
+					<li style="--c: var(--orange)">
+						<details name="skill">
+							<summary>sveet-upgrade</summary>
+							<p>
+								Pulls improvements from newer Sveet releases in without losing your own changes.
+							</p>
+						</details>
+					</li>
+					<li style="--c: var(--teal)">
+						<details name="skill">
+							<summary>ponytail</summary>
+							<p>Makes agents write the smallest change that fully solves the task.</p>
+						</details>
+					</li>
+					<li style="--c: var(--yellow)">
+						<details name="skill">
+							<summary>ui-sdk</summary>
+							<p>Teaches agents to build accessible interfaces from ui-sdk components.</p>
+						</details>
+					</li>
 				</ul>
 				<div class="grid">
 					<div class="card">
@@ -922,20 +1079,24 @@
 				<div class="eyebrow">Is it for you?</div>
 				<h2>Probably. Unless…</h2>
 				<div class="fit">
-					<div class="card accent" style="--c: var(--teal)">
-						<h3>Sweet fit</h3>
+					<div class="card yes">
+						<h3>🍭 Sweet fit</h3>
 						<ul>
+							<li>You want a kickstart, not a kitchen sink</li>
 							<li>You want to ship a real product fast, with agents doing the typing</li>
 							<li>One server and SQLite go a long way for you</li>
 							<li>You like owning your stack and your data</li>
 							<li>You're on macOS or Linux</li>
 						</ul>
 					</div>
-					<div class="card accent" style="--c: var(--pink)">
-						<h3>Not your candy</h3>
+					<div class="card no">
+						<h3>🙅 Not your candy</h3>
 						<ul>
+							<li>
+								You want to start inside a specific ecosystem like Supabase, Firebase or Convex
+							</li>
+							<li>You want lots of boilerplate done for you: billing, teams, dashboards</li>
 							<li>You need Postgres or multiple servers from day one</li>
-							<li>You're on Windows</li>
 							<li>You don't want to work with agents</li>
 						</ul>
 					</div>
@@ -972,6 +1133,36 @@
 					b.textContent = 'Copied!';
 					setTimeout(() => (b.textContent = 'Copy'), 1500);
 				};
+
+			document.addEventListener('click', (e) => {
+				for (const d of document.querySelectorAll('.skills details[open]'))
+					if (!d.contains(e.target)) d.open = false;
+			});
+
+			const colors = ['orange', 'teal', 'yellow', 'blue', 'pink'];
+			const calm = matchMedia('(prefers-reduced-motion: reduce)');
+			document.querySelector('.burst').onclick = (e) => {
+				if (calm.matches) return;
+				const r = e.currentTarget.getBoundingClientRect();
+				for (let i = 0; i < 36; i++) {
+					const s = document.createElement('span');
+					s.className = 'sprinkle';
+					s.style.cssText = `background: var(--${colors[i % 5]}); left: ${r.left + r.width / 2}px; top: ${r.top + r.height / 2}px`;
+					document.body.append(s);
+					const a = Math.random() * 2 * Math.PI;
+					const d = 160 + Math.random() * 380;
+					s.animate(
+						[
+							{ transform: 'translate(-50%, -50%)', opacity: 1 },
+							{
+								transform: `translate(${Math.cos(a) * d}px, ${Math.sin(a) * d + 120}px) rotate(${Math.random() * 900}deg)`,
+								opacity: 0
+							}
+						],
+						{ duration: 1200 + Math.random() * 600, easing: 'cubic-bezier(.2, .7, .3, 1)' }
+					).onfinish = () => s.remove();
+				}
+			};
 		</script>
 	</body>
 </html>

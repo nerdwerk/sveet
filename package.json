@@ -1,6 +1,6 @@
 {
 	"name": "sveet",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "An opinionated, agent-first SvelteKit starter: bun, SQLite, Better Auth, ui-sdk, Fly.io.",
 	"license": "MIT",
 	"private": true,
@@ -9,7 +9,7 @@
 		"bun": ">=1.4.4"
 	},
 	"sveet": {
-		"version": "1.0.0"
+		"version": "1.0.1"
 	},
 	"bun-create": {
 		"postinstall": "rm -rf packages docs && bun run setup",

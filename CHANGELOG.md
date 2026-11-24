@@ -4,6 +4,17 @@ All notable changes to sveet. Format: [Keep a Changelog](https://keepachangelog.
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-11-24
+
+### Changed
+
+- New sticker-style logo at `static/sveet-logo.png` (replaces `static/sveet_logo.png`).
+- README: the sandbox is optional, Scaleway and Fly.io are swappable defaults, and a clearer "Is it for you?".
+
+### Fixed
+
+- `sveet-setup` pointed at the old logo filename.
+
 ## [1.0.0] - 2026-11-20
 
 The agent-first release, shaped by building and running [onelink.ninja](https://onelink.ninja) on sveet.
@@ -48,6 +59,7 @@ The agent-first release, shaped by building and running [onelink.ninja](https://
 
 - Initial sveet: SvelteKit 2 + Svelte 5, Drizzle + libSQL, Better Auth (email + password), shadcn-svelte + Tailwind 4, bun + devbox, Docker → Fly.io, Svelte MCP, and `AGENTS.md`.
 
-[Unreleased]: https://github.com/nerdwerk/sveet/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/nerdwerk/sveet/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/nerdwerk/sveet/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/nerdwerk/sveet/compare/v0.1.0...v1.0.0
 [0.1.0]: https://github.com/nerdwerk/sveet/releases/tag/v0.1.0

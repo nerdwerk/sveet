@@ -36,7 +36,7 @@ The best thing: if you want, you can run this whole thing in a sandbox right awa
 
 ## Is it for you?
 
-Sveet is not for you if you need Postgres or multiple servers from day one, if you're on Windows, or if you don't want to work with agents. Everyone else: welcome!
+Sveet is here to kickstart you, not to be a kitchen sink. It's not for you if you want to start inside a specific ecosystem like Supabase, Firebase or Convex, if you want lots of boilerplate done for you (billing, teams, dashboards), if you need Postgres or multiple servers from day one, or if you don't want to work with agents. Everyone else: welcome!
 
 ## The Sveet stack
 
@@ -52,11 +52,13 @@ So you might be asking what's included to make this thing delicious like candy ð
 - **[microsandbox](https://microsandbox.dev)** dev VM with the dev server, tests and agents ([opencode](https://opencode.ai) by default)
 - **Agent tooling**: `AGENTS.md`, the Svelte MCP, project skills, and [ponytail](https://ponytail.dev) so agents write the least code that works
 
+Picks like Scaleway and Fly.io are opinionated, sensible defaults so you can ship on day one, not handcuffs. Want another mail provider or host? Eject and swap them: the `sveet-mail` and `sveet-deploy` skills walk your agent through it.
+
 ## Getting started
 
 All that hopefully sounds nice already and you want to get started, so here's the fastest way to do that.
 
-**Requirements:** an Apple Silicon Mac, or Linux with KVM (that's what the sandbox runs on) if you want to use the default sandbox. Working without it is still an option though.
+> **Heads-up: the sandbox is optional.** It needs an Apple Silicon Mac or Linux with KVM. Anywhere else, skip it and run everything with bun on your machine, see [Without the sandbox](#without-the-sandbox).
 
 **1. Install what Sveet needs on your machine:** [bun](https://bun.com), [microsandbox](https://microsandbox.dev) (the dev VM) and, for deploys, [flyctl](https://fly.io/docs/flyctl/install/) (optional, but give it a shot if you don't know Fly yet). Either download the [Brewfile](https://raw.githubusercontent.com/nerdwerk/sveet/main/Brewfile) and run `brew bundle` next to it, or run:
 
